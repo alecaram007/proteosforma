@@ -7,6 +7,8 @@ Nessun build step: le pagine HTML sono già nella radice del repo e si possono h
 
 ```
 index.html               Home
+privacy-policy/          Privacy Policy
+cookie-policy/           Cookie Policy
 chi-siamo/               Chi siamo
 corsi/                   Corsi
 avviso-6-2025/           Corsi finanziati → Avviso 6/2025 (GOL)
@@ -17,7 +19,8 @@ news/                    News
 contatti/                Contatti
 404.html                 Pagina non trovata
 style.css  site.js       Stile e comportamenti (menu, form, cookie banner, mappa)
-img/                     Logo (colore e bianco), favicon, icone
+img/                     Logo (colore e bianco), favicon, icone; img/photos/ le foto (Unsplash, licenza libera)
+fonts/                   Font self-hosted (Open Sans, Roboto, Playfair Display, Lato)
 scripts/build.py         Generatore delle pagine (vedi sotto)
 CNAME  robots.txt  sitemap.xml
 ```
@@ -31,12 +34,28 @@ python3 scripts/build.py
 ```
 
 I dati da personalizzare sono le costanti in cima al file: `PIVA`, `SEDE_LEGALE`, `SEDE_OPERATIVA`, `TEL`, `EMAIL`, `INDIRIZZO` (e `EMAIL` in `site.js` per il form).
-Le foto sono caricate da Unsplash (`IMG` in `build.py`): sostituiscile con foto proprie mettendole in `img/`.
+Le foto sono in `img/photos/` (nomi in `IMG` dentro `build.py`): per usare foto proprie basta sostituire i file mantenendo lo stesso nome.
 
-## Hosting
+## Hosting (GitHub Pages, già attivo)
 
-- **GitHub Pages**: Settings → Pages → branch `main`, cartella `/` (root). Il file `CNAME` imposta già il dominio `proteosforma.it`. Sul DNS del dominio: record `A` verso gli IP di GitHub Pages (185.199.108.153, .109.153, .110.153, .111.153) e `CNAME www` → `alecaram007.github.io`.
-- **Netlify / Vercel / Cloudflare Pages**: importa il repo, nessun comando di build, directory di pubblicazione `/`.
+Il sito è pubblicato con **GitHub Pages** dal branch `main` (cartella `/`), con dominio personalizzato `proteosforma.it` (file `CNAME`).
+Ogni push su `main` ridistribuisce il sito in 1-2 minuti.
+
+### DNS da impostare sul registrar del dominio
+
+| Tipo  | Nome | Valore |
+|-------|------|--------|
+| A     | @    | 185.199.108.153 |
+| A     | @    | 185.199.109.153 |
+| A     | @    | 185.199.110.153 |
+| A     | @    | 185.199.111.153 |
+| AAAA  | @    | 2606:50c0:8000::153 |
+| AAAA  | @    | 2606:50c0:8001::153 |
+| AAAA  | @    | 2606:50c0:8002::153 |
+| AAAA  | @    | 2606:50c0:8003::153 |
+| CNAME | www  | alecaram007.github.io |
+
+Quando i record sono propagati, in *Settings → Pages* del repo compare "DNS check successful": attiva **Enforce HTTPS** (il certificato viene emesso automaticamente da GitHub).
 
 ## Anteprima locale
 
