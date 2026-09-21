@@ -171,30 +171,36 @@ main { padding-top: var(--header-h); }
 .btn-form:hover { background: var(--brand); color: #fff; }
 
 /* ---------- Footer ---------- */
-.site-footer { background: #fff; padding: 60px 0 100px; position: relative; overflow: hidden; }
-.footer-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5.5%; align-items: start; position: relative; }
-.footer-brand { padding-top: 20px; }
-.footer-logo { width: 60%; max-width: 300px; margin: 0 auto 30px; }
-.footer-brand h2 { font-family: var(--font-body); font-size: 22px; font-weight: 700; color: var(--navy); margin: 0 0 6px; }
-.footer-brand p { color: var(--navy); font-weight: 600; line-height: 1.8em; margin: 0 0 8px; }
-.footer-brand p a { color: var(--navy); }
-.footer-accr { font-size: 12px; font-weight: 400 !important; color: #777 !important; margin-top: 14px !important; }
-.hero-card .accr { margin-top: 14px; font-size: 14px; font-weight: 400; color: #555; }
-.footer-contact { position: relative; padding: 40px 0 40px 0; }
-.footer-contact::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: 30%; right: -50vw;
-  background: var(--gray); z-index: 0;
+.site-footer { background: var(--navy); color: rgba(255, 255, 255, .8); margin-top: 0; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1.1fr 1.4fr; gap: 50px;
+  padding: 70px 0 56px;
 }
-.contact-box, .footer-contact .btn-pill { position: relative; z-index: 1; }
-.contact-box {
-  background: var(--navy); color: #fff; padding: 40px 40px 30px;
-  box-shadow: 0 2px 18px rgba(0, 0, 0, .3);
+.footer-logo { width: 190px; margin-bottom: 22px; }
+.footer-about p { font-size: 14px; line-height: 1.75em; margin: 0 0 14px; }
+.footer-accr { font-size: 12px; color: rgba(255, 255, 255, .5); line-height: 1.6em; }
+.site-footer h4 {
+  font-family: var(--font-body); font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: #fff; margin: 0 0 18px; padding-bottom: 12px; position: relative;
 }
-.contact-box h2 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; font-size: 40px; color: #fff; line-height: 1.5em; margin-bottom: 10px; }
-.contact-box h4 { font-family: "Lato", Helvetica, Arial, sans-serif; font-weight: 700; font-size: 16px; color: rgba(255, 255, 255, .4); line-height: 1.5em; margin: 14px 0 4px; }
-.contact-box p { color: #fff; line-height: 1.9em; margin: 0; }
-.contact-box a { color: #fff; }
-.footer-contact .btn-pill { margin-top: 40px; }
+.site-footer h4::after { content: ""; position: absolute; left: 0; bottom: 0; width: 28px; height: 2px; background: var(--brand); }
+.site-footer ul { list-style: none; margin: 0; padding: 0; }
+.footer-links li { margin: 0 0 10px; }
+.footer-links a { color: rgba(255, 255, 255, .8); font-size: 14px; transition: color .2s, padding-left .2s; }
+.footer-links a:hover { color: #fff; text-decoration: none; padding-left: 4px; }
+.contact-list li { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 14px; font-size: 14px; line-height: 1.6em; }
+.contact-list svg { width: 18px; height: 18px; flex: none; margin-top: 3px; color: var(--brand); }
+.contact-list a { color: rgba(255, 255, 255, .8); word-break: break-all; }
+.contact-list a:hover { color: #fff; }
+.contact-list small { display: block; font-size: 12px; color: rgba(255, 255, 255, .5); }
+.btn-footer { margin-top: 8px; padding: 12px 26px; font-size: 14px; background: var(--brand); }
+.btn-footer:hover { background: #fff; color: var(--navy); padding-right: 26px; }
+.footer-bottom { border-top: 1px solid rgba(255, 255, 255, .12); padding: 18px 0; }
+.footer-bottom-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.footer-bottom p { margin: 0; font-size: 12px; color: rgba(255, 255, 255, .55); }
+.footer-legal { display: flex; gap: 18px; }
+.footer-legal a, .link-btn { color: rgba(255, 255, 255, .55); font: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+.footer-legal a:hover, .link-btn:hover { color: #fff; text-decoration: none; }
 
 /* ---------- Pagine interne: hero con titolo ---------- */
 .hero-page { padding: 45px 0 0; }
@@ -223,9 +229,9 @@ main { padding-top: var(--header-h); }
 .section-white.split:first-of-type { padding-top: 60px; }
 
 /* pagine semplici / blog */
-.plain-page { padding: 40px 0 0; min-height: 120px; }
+.plain-page { padding: 40px 0 60px; min-height: 160px; }
 .page-title { font-size: 26px; font-weight: 400; color: #333; }
-.blog-page { padding: 40px 0 0; background: #fff; position: relative; }
+.blog-page { padding: 40px 0 70px; background: #fff; position: relative; }
 .blog-page::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 60px; background: var(--light); }
 .blog-title { position: relative; font-family: var(--font-head); font-weight: 500; font-size: 60px; color: var(--navy); margin: 40px 0 30px; }
 .blog-sheet { background: #fff; box-shadow: 0 2px 18px rgba(0, 0, 0, .08); padding: 40px; }
@@ -341,21 +347,19 @@ main { padding-top: var(--header-h); }
 /* ---------- Cookie banner ---------- */
 .cookie-banner {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 10000;
-  background: #fff; box-shadow: 0 -2px 20px rgba(0, 0, 0, .15); padding: 20px 5%;
+  background: #fff; box-shadow: 0 -4px 24px rgba(0, 0, 0, .12); padding: 16px 0;
 }
 .cookie-banner[hidden], .cookie-badge[hidden] { display: none; }
-.cookie-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 30px; align-items: start; max-width: 1400px; margin: 0 auto; }
-.cookie-text img { width: 110px; margin-bottom: 10px; }
-.cookie-text p { font-size: 12px; line-height: 1.6; color: #333; }
-.cookie-links a { margin-right: 14px; font-size: 12px; }
-.cookie-title { text-align: center; font-size: 15px; color: #333; margin: 0 0 14px; }
-.cookie-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cookie-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.cookie-inner p { margin: 0; font-size: 13px; line-height: 1.6; color: #333; }
+.cookie-buttons { display: flex; gap: 10px; flex: none; }
 .cookie-buttons button {
-  border: 0; cursor: pointer; font: inherit; font-size: 15px; color: #333; padding: 44px 12px;
-  background: var(--gray); border-radius: 4px; transition: filter .2s;
+  border: 1px solid #d8dee3; background: #fff; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600;
+  color: #333; padding: 10px 20px; border-radius: 4px; transition: background .2s, color .2s;
 }
-.cookie-buttons button:hover { filter: brightness(.95); }
-.cookie-buttons .cookie-accept { background: var(--navy); color: #fff; }
+.cookie-buttons button:hover { background: #f3f3f3; }
+.cookie-buttons .cookie-accept { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+.cookie-buttons .cookie-accept:hover { background: var(--navy); }
 .cookie-badge {
   position: fixed; right: 20px; bottom: 20px; z-index: 9999;
   width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
@@ -381,8 +385,7 @@ main { padding-top: var(--header-h); }
   .hero-tagline { font-size: 16px; }
   .intro h2, .split-text h2 { font-size: 30px; }
   .cards { grid-template-columns: 1fr; gap: 30px; }
-  .footer-inner { grid-template-columns: 1fr; gap: 40px; }
-  .footer-contact::before { left: -50vw; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; padding: 50px 0 40px; }
   .hero-split { grid-template-columns: 1fr; gap: 20px; }
   .hero-title h1, .avviso-hero h1 { font-size: 40px; }
   .hero-side img { margin: 0; max-width: 260px; }
@@ -395,9 +398,8 @@ main { padding-top: var(--header-h); }
   .form-box-split { grid-template-columns: 1fr; }
   .form-box, .contact-section .form-box { padding: 40px 24px; }
   .form-info { padding: 20px; }
-  .cookie-inner { grid-template-columns: 1fr; }
-  .cookie-text { display: none; }
-  .cookie-buttons button { padding: 18px 8px; font-size: 13px; }
+  .cookie-inner { flex-direction: column; align-items: stretch; }
+  .cookie-buttons { justify-content: flex-end; }
 }
 @media (max-width: 767px) {
   :root { --header-h: 64px; }
@@ -410,6 +412,6 @@ main { padding-top: var(--header-h); }
   .blog-sheet { padding: 20px; }
   .contact-form .form-row { grid-template-columns: 1fr; }
   .form-bottom { flex-direction: column; align-items: flex-end; }
-  .footer-logo { width: 70%; }
-  .cookie-buttons { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+  .footer-bottom-inner { flex-direction: column; align-items: flex-start; }
 }

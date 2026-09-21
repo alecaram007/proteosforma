@@ -132,4 +132,6 @@
     });
   }
   if (badge) badge.addEventListener('click', function () { showBanner(true); });
+  var manage = document.getElementById('cookie-manage');
+  if (manage) manage.addEventListener('click', function () { showBanner(true); window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); });
 })();

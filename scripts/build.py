@@ -55,6 +55,16 @@ NAV = [
 ]
 
 
+SEDE_LEGALE_FULL = "Cortile Dulcetta, 39 – 92026 Favara (AG)"
+YEAR = 2026
+
+
+def tel_li() -> str:
+    if not TEL:
+        return ""
+    return f'<li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><a href="tel:{TEL.replace(" ", "")}">{TEL}</a></li>'
+
+
 def tel_html() -> str:
     if not TEL:
         return ""
@@ -106,9 +116,11 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <link rel="apple-touch-icon" href="{BASE}/img/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800|Roboto:300,400,500,700,900|Playfair+Display:700|Lato:400,700,900&display=swap" />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@300;500;700&family=Playfair+Display:wght@700&family=Lato:wght@700;900&display=swap" />
   <link rel="stylesheet" href="{BASE}/style.css" />
   {extra_head}
+  <script type="application/ld+json">{{"@context":"https://schema.org","@type":"EducationalOrganization","name":"{RAGIONE_SOCIALE}","alternateName":"{BRAND}","url":"{SITE}/","logo":"{SITE}/img/logo.png","email":"{PEC}","vatID":"IT{PIVA}","taxID":"{PIVA}","address":{{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"}},"areaServed":"Sicilia"}}</script>
 </head>
 <body>
   <header class="site-header" id="top">
@@ -141,45 +153,55 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-col footer-brand">
-        <img class="footer-logo" src="{BASE}/img/logo.png" alt="{BRAND}" width="1359" height="505" loading="lazy" />
-        <h2><strong>{BRAND}</strong></h2>
-        <p>{FORMA}</p>
-        <p>P.IVA / C.F. {PIVA} – REA {REA}</p>
-        <p>Sede Legale: {SEDE_LEGALE}</p>
-        <p>Sede Operativa: {SEDE_OPERATIVA}</p>
-        <p>PEC: <a href="mailto:{PEC}">{PEC}</a></p>
-        <p class="footer-accr">{ACCREDITAMENTO}</p>
+    <div class="container footer-grid">
+      <div class="footer-about">
+        <img class="footer-logo" src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" loading="lazy" />
+        <p>Ente di formazione professionale accreditato dalla Regione Siciliana. Corsi, certificazioni e percorsi finanziati a Favara, Ragusa e Alcamo.</p>
+        <p class="footer-accr">Accreditamento CIR AD5015 · D.D.G. n. 699 del 29/05/2025<br>Orientamento e Formazione professionale (B, D)</p>
       </div>
-      <div class="footer-col footer-contact">
-        <div class="contact-box">
-          <h2>Contatti</h2>
-          {tel_html()}
-          <h4>Email</h4>
-          <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-          <h4>Indirizzo</h4>
-          <p>{INDIRIZZO}</p>
-        </div>
-        <a class="btn btn-pill" href="{BASE}/contatti/">Contattaci</a>
+      <nav class="footer-links" aria-label="Menu footer">
+        <h4>Il sito</h4>
+        <ul>
+          <li><a href="{BASE}/">Home</a></li>
+          <li><a href="{BASE}/chi-siamo/">Chi siamo</a></li>
+          <li><a href="{BASE}/corsi/">Corsi</a></li>
+          <li><a href="{BASE}/bandi-e-avvisi/">Bandi e Avvisi</a></li>
+          <li><a href="{BASE}/news/">News</a></li>
+          <li><a href="{BASE}/contatti/">Contatti</a></li>
+        </ul>
+      </nav>
+      <nav class="footer-links" aria-label="Corsi finanziati">
+        <h4>Corsi finanziati</h4>
+        <ul>
+          <li><a href="{BASE}/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
+          <li><a href="{BASE}/avviso-7-2023/">Avviso 7/2023</a></li>
+          <li><a href="{BASE}/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
+        </ul>
+      </nav>
+      <div class="footer-contact">
+        <h4>Contatti</h4>
+        <ul class="contact-list">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>{INDIRIZZO}<br><small>Sede legale: {SEDE_LEGALE_FULL}</small></span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg><a href="mailto:{PEC}">{PEC}</a></li>
+          {tel_li()}
+        </ul>
+        <a class="btn btn-square btn-footer" href="{BASE}/contatti/">Contattaci</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>© {YEAR} {RAGIONE_SOCIALE} · P.IVA / C.F. {PIVA} · REA {REA}</p>
+        <p class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
       </div>
     </div>
   </footer>
 
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci Consenso" hidden>
-    <div class="cookie-inner">
-      <div class="cookie-text">
-        <img src="{BASE}/img/logo.png" alt="" width="120" height="45" />
-        <p>Per fornire le migliori esperienze, utilizziamo tecnologie come i cookie per memorizzare e/o accedere alle informazioni del dispositivo. Il consenso a queste tecnologie ci permetterà di elaborare dati come il comportamento di navigazione o ID unici su questo sito. Non acconsentire o ritirare il consenso può influire negativamente su alcune caratteristiche e funzioni.</p>
-        <p class="cookie-links"><a href="#">Cookie Policy</a> <a href="#">Privacy Policy</a></p>
-      </div>
-      <div class="cookie-actions">
-        <p class="cookie-title">Gestisci Consenso</p>
-        <div class="cookie-buttons">
-          <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>
-          <button type="button" data-consent="deny">Nega</button>
-          <button type="button" data-consent="prefs">Visualizza le preferenze</button>
-        </div>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci consenso cookie" hidden>
+    <div class="container cookie-inner">
+      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="#">Cookie Policy</a></p>
+      <div class="cookie-buttons">
+        <button type="button" data-consent="deny">Rifiuta</button>
+        <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>
       </div>
     </div>
   </div>
@@ -301,7 +323,7 @@ def build_home():
     body = f"""
     <section class="hero hero-home" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,#0a7dbe 99%),url('{IMG["hero_home"]}')">
       <div class="hero-logo">
-        <img src="{BASE}/img/logo-white.png" alt="{BRAND} – {TAGLINE}" width="1359" height="505" />
+        <img src="{BASE}/img/logo-white.png" alt="{BRAND} – {TAGLINE}" width="1359" height="505" fetchpriority="high" />
         <span class="hero-tagline">{TAGLINE}</span>
       </div>
     </section>
@@ -321,7 +343,7 @@ def build_home():
       </div>
     </section>
 """
-    return page(path="/", title="Home",
+    return page(path="/", title="Home", extra_head=f'<link rel="preload" as="image" href="{IMG["hero_home"]}" fetchpriority="high" />',
                 description=f"{BRAND} è il tuo punto di riferimento per una formazione di alta qualità in Sicilia: corsi, certificazioni e corsi finanziati dalla Regione Siciliana.",
                 body=body)
 
