@@ -8,13 +8,24 @@ BASE = ""
 SITE = "https://proteosforma.it"
 
 BRAND = "Proteos"
+RAGIONE_SOCIALE = "Proteos S.r.l. Impresa Sociale"
 TAGLINE = "Ente di Formazione Professionale"
-PIVA = "00000000000"
-SEDE_LEGALE = "Via Esempio, 1 Palermo PA"
-SEDE_OPERATIVA = "Via Esempio, 1 Palermo PA"
-TEL = "091 0000000"
-EMAIL = "info@proteos.it"
-INDIRIZZO = "Via Esempio, 1 90100 Palermo (PA)"
+FORMA = "S.r.l. Impresa Sociale"
+PIVA = "03838230823"
+REA = "AG-228657"
+SEDE_LEGALE = "Cortile Dulcetta, 39 Favara AG"
+SEDE_OPERATIVA = "Via Cesare Sessa, 58 Favara AG"
+TEL = ""  # TODO: numero di telefono non ancora disponibile
+EMAIL = "proteos@arubapec.it"
+PEC = "proteos@arubapec.it"
+INDIRIZZO = "Via Cesare Sessa, 58 92026 Favara (AG)"
+ACCREDITAMENTO = "Ente accreditato dalla Regione Siciliana – Codice CIR AD5015 – D.D.G. n. 699 del 29/05/2025"
+AMBITI = "Orientamento e Formazione professionale (macrotipologie B, D)"
+SEDI_OCCASIONALI = [
+    "Viale Aldo Moro, 234/A – Favara (AG)",
+    "Via Ercolano, 62 – Ragusa (RG)",
+    "Via Padre Pino Puglisi, 19 – Alcamo (TP)",
+]
 
 U = "https://images.unsplash.com/"
 IMG = {
@@ -42,6 +53,12 @@ NAV = [
     ("News", "/news/"),
     ("Contatti", "/contatti/"),
 ]
+
+
+def tel_html() -> str:
+    if not TEL:
+        return ""
+    return f'<h4>Telefono</h4>\n          <p><a href="tel:{TEL.replace(" ", "")}">{TEL}</a></p>'
 
 
 def nav_html(current: str) -> str:
@@ -78,7 +95,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <meta name="description" content="{html.escape(description)}" />
   <link rel="canonical" href="{canonical}" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="{BRAND}" />
+  <meta property="og:site_name" content="{RAGIONE_SOCIALE}" />
   <meta property="og:title" content="{html.escape(full_title)}" />
   <meta property="og:description" content="{html.escape(description)}" />
   <meta property="og:url" content="{canonical}" />
@@ -128,16 +145,17 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
       <div class="footer-col footer-brand">
         <img class="footer-logo" src="{BASE}/img/logo.png" alt="{BRAND}" width="1359" height="505" loading="lazy" />
         <h2><strong>{BRAND}</strong></h2>
-        <p>{TAGLINE}</p>
-        <p>P.IVA {PIVA}</p>
+        <p>{FORMA}</p>
+        <p>P.IVA / C.F. {PIVA} – REA {REA}</p>
         <p>Sede Legale: {SEDE_LEGALE}</p>
         <p>Sede Operativa: {SEDE_OPERATIVA}</p>
+        <p>PEC: <a href="mailto:{PEC}">{PEC}</a></p>
+        <p class="footer-accr">{ACCREDITAMENTO}</p>
       </div>
       <div class="footer-col footer-contact">
         <div class="contact-box">
           <h2>Contatti</h2>
-          <h4>Telefono</h4>
-          <p><a href="tel:{TEL.replace(' ', '')}">{TEL}</a></p>
+          {tel_html()}
           <h4>Email</h4>
           <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
           <h4>Indirizzo</h4>
@@ -318,6 +336,7 @@ def build_chi_siamo():
       <div class="container">
         <div class="hero-card">
           <p>In {BRAND} crediamo che la formazione sia la chiave per un futuro migliore. Offriamo corsi innovativi e personalizzati, pensati per rispondere alle esigenze del mercato del lavoro. La nostra missione è quella di fornire strumenti e conoscenze che permettano a ciascuno di realizzare il proprio potenziale. Siamo un punto di riferimento per chi desidera crescere professionalmente e personalmente, grazie a un approccio pratico e orientato ai risultati. Unisciti a noi e scopri come possiamo aiutarti a costruire il tuo percorso di successo.</p>
+          <p class="accr">{RAGIONE_SOCIALE} è un {ACCREDITAMENTO.lower()[0].lower() + ACCREDITAMENTO[1:]} per gli ambiti {AMBITI}.</p>
         </div>
       </div>
     </section>
@@ -453,12 +472,17 @@ def build_contatti():
         <div class="form-box form-box-split">
           <div class="form-info">
             <h2>Contatti</h2>
-            <h4>Telefono</h4>
-            <p>{TEL}</p>
-            <h4>Email</h4>
+            {tel_html()}
+            <h4>Email / PEC</h4>
             <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
-            <h4>Indirizzo</h4>
+            <h4>Sede direzionale e di erogazione</h4>
             <p>{INDIRIZZO}</p>
+            <h4>Sede legale</h4>
+            <p>{SEDE_LEGALE.replace(" Favara AG", " – 92026 Favara (AG)")}</p>
+            <h4>Sedi di erogazione occasionali</h4>
+            <p>{"<br>".join(SEDI_OCCASIONALI)}</p>
+            <h4>Accreditamento</h4>
+            <p>{ACCREDITAMENTO}<br>{AMBITI}</p>
           </div>
           <div class="form-fields">
 {contact_form(a=15, b=14)}
@@ -468,7 +492,7 @@ def build_contatti():
     </section>
 """
     return page(path="/contatti/", title="Contatti",
-                description=f"Contatta {BRAND}: telefono, email e indirizzo della sede. Compila il form e verrai ricontattato dalla nostra segreteria.",
+                description=f"Contatta {RAGIONE_SOCIALE}: PEC, sedi di Favara, Ragusa e Alcamo e accreditamento regionale. Compila il form e verrai ricontattato dalla nostra segreteria.",
                 body=body)
 
 

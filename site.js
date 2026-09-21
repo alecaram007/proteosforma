@@ -56,7 +56,7 @@
   }
 
   /* ----- contact forms: validazione + captcha aritmetico + mailto ----- */
-  var EMAIL = 'info@proteos.it';
+  var EMAIL = 'proteos@arubapec.it';
   document.querySelectorAll('.contact-form').forEach(function (form) {
     var status = form.querySelector('.form-status');
     form.addEventListener('submit', function (e) {
@@ -103,7 +103,7 @@
       iframe.title = 'Mappa sede Proteos';
       iframe.loading = 'lazy';
       iframe.referrerPolicy = 'no-referrer-when-downgrade';
-      iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=13.30%2C38.08%2C13.42%2C38.16&layer=mapnik';
+      iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=13.640%2C37.300%2C13.690%2C37.335&marker=37.3175%2C13.6635&layer=mapnik';
       box.innerHTML = '';
       box.appendChild(iframe);
     });

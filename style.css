@@ -177,6 +177,9 @@ main { padding-top: var(--header-h); }
 .footer-logo { width: 60%; max-width: 300px; margin: 0 auto 30px; }
 .footer-brand h2 { font-family: var(--font-body); font-size: 22px; font-weight: 700; color: var(--navy); margin: 0 0 6px; }
 .footer-brand p { color: var(--navy); font-weight: 600; line-height: 1.8em; margin: 0 0 8px; }
+.footer-brand p a { color: var(--navy); }
+.footer-accr { font-size: 12px; font-weight: 400 !important; color: #777 !important; margin-top: 14px !important; }
+.hero-card .accr { margin-top: 14px; font-size: 14px; font-weight: 400; color: #555; }
 .footer-contact { position: relative; padding: 40px 0 40px 0; }
 .footer-contact::before {
   content: ""; position: absolute; top: 0; bottom: 0; left: 30%; right: -50vw;
