@@ -16,12 +16,11 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="/img/favicon-64.png" />
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@300;500;700&family=Playfair+Display:wght@700&family=Lato:wght@700;900&display=swap" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/open-sans-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <link rel="stylesheet" href="/style.css" />
-  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=70" fetchpriority="high" />
+  <link rel="preload" as="image" href="/img/photos/hero_home.jpg" fetchpriority="high" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Proteos S.r.l. Impresa Sociale","alternateName":"Proteos","url":"https://proteosforma.it/","logo":"https://proteosforma.it/img/logo.png","email":"proteos@arubapec.it","vatID":"IT03838230823","taxID":"03838230823","address":{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"},"areaServed":"Sicilia"}</script>
 </head>
 <body>
@@ -58,7 +57,7 @@
 
   <main id="main">
 
-    <section class="hero hero-home" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,#0a7dbe 99%),url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=70')">
+    <section class="hero hero-home" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,#0a7dbe 99%),url('/img/photos/hero_home.jpg')">
       <div class="hero-logo">
         <img src="/img/logo-white.png" alt="Proteos – Ente di Formazione Professionale" width="1359" height="505" fetchpriority="high" />
         <span class="hero-tagline">Ente di Formazione Professionale</span>
@@ -77,7 +76,7 @@
         <h2 class="sr-only">Offerta Formativa</h2>
         <div class="cards">
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&h=541&q=70" alt="" width="800" height="541" loading="lazy" />
+            <img src="/img/photos/card1.jpg" alt="" width="800" height="541" loading="lazy" />
             <div class="card-body">
               <h4>Certificazioni</h4>
               <p>Le certificazioni di Proteos rappresentano un trampolino di lancio verso il tuo futuro professionale. Ogni corso è progettato per fornirti le competenze richieste dal mercato, con un focus particolare sulla pratica e sull’applicazione reale delle conoscenze. I nostri esperti ti guideranno attraverso un percorso formativo che non solo ti permetterà di ottenere una certificazione riconosciuta, ma ti aiuterà anche a costruire un profilo professionale competitivo. Unisciti a noi e trasforma le tue aspirazioni in realtà, con la certezza di avere alle spalle un’istituzione che crede nel tuo successo.</p>
@@ -85,7 +84,7 @@
             <a class="btn btn-square" href="/corsi/">Scopri di più</a>
           </article>
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&h=541&q=70" alt="" width="800" height="541" loading="lazy" />
+            <img src="/img/photos/card2.jpg" alt="" width="800" height="541" loading="lazy" />
             <div class="card-body">
               <h4>Corsi finanziati</h4>
               <p>I corsi finanziati dalla Regione Sicilia rappresentano un’opportunità imperdibile per chi desidera ampliare le proprie competenze e migliorare il proprio profilo professionale. Grazie a un sostegno concreto, puoi accedere a programmi formativi di alta qualità senza gravare sul tuo budget. Ogni corso è pensato per rispondere alle esigenze del mercato del lavoro, fornendo conoscenze pratiche e teoriche che ti prepareranno ad affrontare le sfide del futuro. Unisciti a noi e scopri come il tuo talento può brillare attraverso un percorso formativo che valorizza le tue aspirazioni e ti guida verso nuove opportunità.</p>
@@ -93,7 +92,7 @@
             <a class="btn btn-square" href="/avviso-6-2025/">Scopri di più</a>
           </article>
           <article class="card">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=541&q=70" alt="" width="800" height="541" loading="lazy" />
+            <img src="/img/photos/card3.jpg" alt="" width="800" height="541" loading="lazy" />
             <div class="card-body">
               <h4>Bandi e Avvisi</h4>
               <p>Bandi e avvisi per docenti e studenti sono fondamentali per rimanere aggiornati sulle opportunità di crescita e sviluppo professionale. La nostra piattaforma offre un accesso facile e veloce a tutte le informazioni necessarie, consentendo a insegnanti e allievi di scoprire corsi, eventi e risorse che possono arricchire la loro esperienza educativa. Siamo impegnati a fornire un supporto costante, affinché ogni membro della nostra comunità possa cogliere al volo le occasioni che si presentano. Unisciti a noi per esplorare un mondo di possibilità e dare vita ai tuoi sogni accademici.</p>
@@ -145,14 +144,14 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>© 2026 Proteos S.r.l. Impresa Sociale · P.IVA / C.F. 03838230823 · REA AG-228657</p>
-        <p class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
+        <p class="footer-legal"><a href="/privacy-policy/">Privacy Policy</a><a href="/cookie-policy/">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
       </div>
     </div>
   </footer>
 
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci consenso cookie" hidden>
     <div class="container cookie-inner">
-      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="#">Cookie Policy</a></p>
+      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="/cookie-policy/">Cookie Policy</a></p>
       <div class="cookie-buttons">
         <button type="button" data-consent="deny">Rifiuta</button>
         <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>

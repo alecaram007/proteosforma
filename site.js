@@ -67,6 +67,9 @@
         el.classList.toggle('invalid', !valid);
         if (!valid) ok = false;
       });
+      var privacy = form.querySelector('input[name="privacy"]');
+      if (privacy && !privacy.checked) { privacy.closest('.form-privacy').classList.add('invalid'); ok = false; }
+      else if (privacy) { privacy.closest('.form-privacy').classList.remove('invalid'); }
       var a = parseInt(form.dataset.a, 10), b = parseInt(form.dataset.b, 10);
       var captcha = form.querySelector('.captcha-input');
       if (parseInt(captcha.value, 10) !== a + b) {
@@ -75,7 +78,7 @@
       }
       if (!ok) {
         status.className = 'form-status error';
-        status.textContent = 'Compila tutti i campi obbligatori e verifica il risultato della somma.';
+        status.textContent = 'Compila tutti i campi obbligatori, accetta l\'informativa privacy e verifica il risultato della somma.';
         return;
       }
       var f = form.elements;

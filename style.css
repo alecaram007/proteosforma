@@ -415,3 +415,18 @@ main { padding-top: var(--header-h); }
   .footer-grid { grid-template-columns: 1fr; gap: 30px; }
   .footer-bottom-inner { flex-direction: column; align-items: flex-start; }
 }
+
+/* ---------- Pagine legali / form privacy ---------- */
+.legal-page { padding: 50px 0 80px; }
+.legal-page .page-title { font-size: 40px; font-weight: 500; color: var(--navy); margin-bottom: 6px; }
+.legal-updated { font-size: 12px; color: #999; margin-bottom: 30px; }
+.legal-page h2 { font-family: var(--font-body); font-size: 20px; font-weight: 700; color: #333; margin: 32px 0 10px; }
+.legal-page p, .legal-page li { font-size: 15px; line-height: 1.8em; color: #444; }
+.legal-page ul { padding-left: 20px; }
+.legal-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 10px 0 20px; }
+.legal-table th, .legal-table td { border: 1px solid #e3e3e3; padding: 10px 12px; text-align: left; vertical-align: top; }
+.legal-table th { background: var(--light); color: var(--navy); }
+.form-privacy { color: #fff; font-size: 13px; margin: 6px 0 14px; }
+.form-privacy a { color: #fff; text-decoration: underline; }
+.form-privacy input { margin-right: 6px; accent-color: var(--brand); }
+.form-privacy.invalid { color: #ffd2cf; }

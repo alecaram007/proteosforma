@@ -27,18 +27,8 @@ SEDI_OCCASIONALI = [
     "Via Padre Pino Puglisi, 19 – Alcamo (TP)",
 ]
 
-U = "https://images.unsplash.com/"
-IMG = {
-    "hero_home": U + "photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=2000&q=70",
-    "card1": U + "photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&h=541&q=70",
-    "card2": U + "photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&h=541&q=70",
-    "card3": U + "photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=541&q=70",
-    "hero_chi": U + "photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2000&q=70",
-    "chi1": U + "photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=70",
-    "chi2": U + "photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=70",
-    "chi3": U + "photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=70",
-    "hero_contatti": U + "photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=70",
-}
+IMG = {k: f"{BASE}/img/photos/{k}.jpg" for k in [
+    "hero_home", "card1", "card2", "card3", "hero_chi", "chi1", "chi2", "chi3", "hero_contatti"]}
 
 NAV = [
     ("Home", "/"),
@@ -114,10 +104,9 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <link rel="icon" type="image/png" sizes="32x32" href="{BASE}/img/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="{BASE}/img/favicon-64.png" />
   <link rel="apple-touch-icon" href="{BASE}/img/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@300;500;700&family=Playfair+Display:wght@700&family=Lato:wght@700;900&display=swap" />
+  <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/open-sans-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="{BASE}/fonts/fonts.css" />
   <link rel="stylesheet" href="{BASE}/style.css" />
   {extra_head}
   <script type="application/ld+json">{{"@context":"https://schema.org","@type":"EducationalOrganization","name":"{RAGIONE_SOCIALE}","alternateName":"{BRAND}","url":"{SITE}/","logo":"{SITE}/img/logo.png","email":"{PEC}","vatID":"IT{PIVA}","taxID":"{PIVA}","address":{{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"}},"areaServed":"Sicilia"}}</script>
@@ -191,14 +180,14 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>© {YEAR} {RAGIONE_SOCIALE} · P.IVA / C.F. {PIVA} · REA {REA}</p>
-        <p class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
+        <p class="footer-legal"><a href="{BASE}/privacy-policy/">Privacy Policy</a><a href="{BASE}/cookie-policy/">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
       </div>
     </div>
   </footer>
 
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci consenso cookie" hidden>
     <div class="container cookie-inner">
-      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="#">Cookie Policy</a></p>
+      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="{BASE}/cookie-policy/">Cookie Policy</a></p>
       <div class="cookie-buttons">
         <button type="button" data-consent="deny">Rifiuta</button>
         <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>
@@ -232,6 +221,7 @@ def contact_form(cta: str = "Invia messaggio", a: int = 14, b: int = 14) -> str:
           <input class="input" id="f-subject" name="oggetto" type="text" placeholder="Oggetto del messaggio" />
           <label class="sr-only" for="f-msg">Messaggio</label>
           <textarea class="input" id="f-msg" name="messaggio" rows="6" placeholder="Messaggio" required></textarea>
+          <p class="form-privacy"><label><input type="checkbox" name="privacy" required /> Ho letto l’<a href="{BASE}/privacy-policy/">informativa privacy</a> e acconsento al trattamento dei dati per essere ricontattato.</label></p>
           <div class="form-bottom">
             <label class="captcha"><span>{a} + {b} = </span><input class="input captcha-input" name="captcha" type="text" inputmode="numeric" size="2" required /></label>
             <button class="btn btn-form" type="submit">{cta}</button>
@@ -518,6 +508,63 @@ def build_contatti():
                 body=body)
 
 
+def legal_page(slug, title, body_html):
+    body = f"""
+    <section class="section section-white legal-page">
+      <div class="container narrow">
+        <h1 class="page-title">{title}</h1>
+        <p class="legal-updated">Ultimo aggiornamento: settembre {YEAR}</p>
+        {body_html}
+      </div>
+    </section>
+"""
+    return page(path=f"/{slug}/", title=title, description=f"{title} di {RAGIONE_SOCIALE} – proteosforma.it", body=body)
+
+
+def build_legal():
+    titolare = f"<p><strong>Titolare del trattamento:</strong> {RAGIONE_SOCIALE}, sede legale in {SEDE_LEGALE_FULL}, P.IVA / C.F. {PIVA}, PEC <a href=\"mailto:{PEC}\">{PEC}</a>.</p>"
+    privacy = f"""
+        {titolare}
+        <h2>1. Tipologia di dati trattati</h2>
+        <p><strong>Dati di navigazione.</strong> I sistemi informatici e le procedure software preposte al funzionamento di questo sito acquisiscono, nel corso del loro normale esercizio, alcuni dati la cui trasmissione è implicita nell’uso dei protocolli di comunicazione di Internet (indirizzi IP, orario della richiesta, URL richiesto, dimensione della risposta, browser e sistema operativo). Tali dati sono trattati dal fornitore di hosting esclusivamente per finalità tecniche e di sicurezza e vengono conservati per il tempo strettamente necessario.</p>
+        <p><strong>Dati forniti volontariamente.</strong> Compilando i moduli di contatto o di iscrizione presenti sul sito (nome e cognome, telefono, email, oggetto e messaggio) l’utente fornisce dati personali che vengono trasmessi al Titolare tramite il proprio client di posta elettronica. L’invio è facoltativo e comporta la successiva acquisizione dell’indirizzo del mittente e degli altri dati inseriti.</p>
+        <h2>2. Finalità e base giuridica</h2>
+        <ul>
+          <li>Riscontro alle richieste di informazioni e di iscrizione ai percorsi formativi (art. 6, par. 1, lett. b GDPR – misure precontrattuali su richiesta dell’interessato).</li>
+          <li>Adempimento di obblighi di legge, anche connessi all’accreditamento regionale e ai corsi finanziati (art. 6, par. 1, lett. c GDPR).</li>
+          <li>Sicurezza e corretto funzionamento del sito (art. 6, par. 1, lett. f GDPR – legittimo interesse).</li>
+        </ul>
+        <h2>3. Modalità di trattamento e conservazione</h2>
+        <p>I dati sono trattati con strumenti informatici e cartacei, con misure adeguate a garantirne sicurezza e riservatezza. I dati dei moduli di contatto sono conservati per il tempo necessario a riscontrare la richiesta e, in caso di iscrizione a un percorso formativo, per la durata prevista dalla normativa sui corsi finanziati e dagli obblighi fiscali e amministrativi.</p>
+        <h2>4. Destinatari</h2>
+        <p>I dati possono essere trattati da personale autorizzato del Titolare, dal fornitore di hosting del sito e, per i corsi finanziati, comunicati alla Regione Siciliana e agli enti preposti nei limiti degli obblighi di legge. I dati non sono diffusi né trasferiti al di fuori dell’Unione Europea, salvo i servizi indicati nella Cookie Policy.</p>
+        <h2>5. Diritti dell’interessato</h2>
+        <p>L’interessato può esercitare in qualsiasi momento i diritti previsti dagli artt. 15-22 GDPR (accesso, rettifica, cancellazione, limitazione, portabilità, opposizione) scrivendo a <a href="mailto:{PEC}">{PEC}</a>. Ha inoltre il diritto di proporre reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" rel="noopener" target="_blank">www.garanteprivacy.it</a>).</p>
+        <h2>6. Cookie</h2>
+        <p>Per le informazioni sull’uso dei cookie si rimanda alla <a href="{{BASE}}/cookie-policy/">Cookie Policy</a>.</p>
+    """.replace("{{BASE}}", BASE)
+    cookie = f"""
+        {titolare}
+        <h2>Cosa sono i cookie</h2>
+        <p>I cookie sono piccoli file di testo che i siti visitati inviano al dispositivo dell’utente, dove vengono memorizzati per essere ritrasmessi agli stessi siti alla visita successiva. Questo sito utilizza un numero minimo di tecnologie, descritte di seguito.</p>
+        <h2>Cookie e tecnologie utilizzate</h2>
+        <table class="legal-table">
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
+          <tbody>
+            <tr><td>proteos-consent</td><td>Tecnico (localStorage)</td><td>Memorizza la scelta espressa nel banner dei cookie.</td><td>Fino a cancellazione da parte dell’utente</td></tr>
+            <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>La mappa nella pagina Contatti viene caricata solo dopo un clic esplicito dell’utente; il fornitore (OpenStreetMap Foundation) può ricevere l’indirizzo IP.</td><td>Sessione</td></tr>
+          </tbody>
+        </table>
+        <p>Il sito <strong>non</strong> utilizza cookie di profilazione, strumenti di analisi statistica né pixel pubblicitari. I caratteri tipografici e le immagini sono ospitati sullo stesso server del sito e non comportano richieste verso servizi terzi.</p>
+        <h2>Gestione delle preferenze</h2>
+        <p>Al primo accesso viene mostrato un banner con cui accettare o rifiutare i contenuti di terze parti. La scelta può essere modificata in qualsiasi momento tramite il link “Gestisci cookie” nel piè di pagina o cancellando i dati del sito dalle impostazioni del browser. Le istruzioni per i principali browser: <a href="https://support.google.com/chrome/answer/95647" rel="noopener" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/it/kb/Gestione%20dei%20cookie" rel="noopener" target="_blank">Firefox</a>, <a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" rel="noopener" target="_blank">Safari</a>, <a href="https://support.microsoft.com/it-it/microsoft-edge" rel="noopener" target="_blank">Edge</a>.</p>
+        <h2>Riferimenti normativi</h2>
+        <p>Regolamento (UE) 2016/679 (GDPR), D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018, Linee guida del Garante per la protezione dei dati personali sui cookie del 10 giugno 2021.</p>
+    """
+    return {"privacy-policy": legal_page("privacy-policy", "Privacy Policy", privacy),
+            "cookie-policy": legal_page("cookie-policy", "Cookie Policy", cookie)}
+
+
 def build_avvisi():
     a6 = avviso_page(
         slug="avviso-6-2025", number="6/2025", title_pre="Avviso", subtitle="",
@@ -588,9 +635,9 @@ def main():
     write("news/index.html", build_news())
     write("bandi-e-avvisi/index.html", build_bandi())
     write("contatti/index.html", build_contatti())
-    for slug, content in build_avvisi().items():
+    for slug, content in {**build_avvisi(), **build_legal()}.items():
         write(f"{slug}/index.html", content)
-    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso-6-2025/", "/avviso-7-2023/", "/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/"]
+    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso-6-2025/", "/avviso-7-2023/", "/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)

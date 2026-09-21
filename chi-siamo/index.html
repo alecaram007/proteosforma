@@ -16,10 +16,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="/img/favicon-64.png" />
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@300;500;700&family=Playfair+Display:wght@700&family=Lato:wght@700;900&display=swap" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/open-sans-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <link rel="stylesheet" href="/style.css" />
   
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Proteos S.r.l. Impresa Sociale","alternateName":"Proteos","url":"https://proteosforma.it/","logo":"https://proteosforma.it/img/logo.png","email":"proteos@arubapec.it","vatID":"IT03838230823","taxID":"03838230823","address":{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"},"areaServed":"Sicilia"}</script>
@@ -58,7 +57,7 @@
 
   <main id="main">
 
-    <section class="hero hero-page hero-chi" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(10,125,190,.85) 99%),url('https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2000&q=70')">
+    <section class="hero hero-page hero-chi" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(10,125,190,.85) 99%),url('/img/photos/hero_chi.jpg')">
       <div class="container hero-split">
         <div class="hero-title"><h1>Chi siamo</h1></div>
         <div class="hero-side"><img src="/img/logo-white.png" alt="Proteos" width="1359" height="505" /></div>
@@ -73,7 +72,7 @@
 
     <section class="section section-white split">
       <div class="container split-inner">
-        <div class="split-media"><img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=70" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="/img/photos/chi1.jpg" alt="" width="1200" height="800" loading="lazy" /></div>
         <div class="split-text">
           <h2>Giovane e Dinamica</h2>
           <p>In Proteos, ci impegniamo a creare un ambiente di apprendimento stimolante e inclusivo. I nostri corsi sono progettati per essere accessibili a tutti, indipendentemente dal livello di esperienza. Crediamo fermamente che ogni persona abbia il diritto di formarsi e di accedere a opportunità di crescita. Con il nostro approccio pratico e interattivo, i partecipanti possono acquisire competenze reali che possono applicare immediatamente nel mondo del lavoro. Siamo qui per accompagnarti in ogni fase del tuo percorso formativo, offrendo supporto e consulenza personalizzata. Scopri il tuo potenziale con noi e inizia a costruire il tuo futuro oggi stesso.</p>
@@ -87,13 +86,13 @@
           <h2>La nostra visione</h2>
           <p>In Proteos, siamo appassionati di trasformare le aspirazioni in realtà. Ogni corso che offriamo è un viaggio verso l’eccellenza, progettato per ispirare e motivare. La nostra squadra di esperti è dedicata a fornire un’istruzione di alta qualità, arricchita da esperienze pratiche e casi studio reali. Siamo convinti che la formazione non sia solo un’opportunità, ma un diritto fondamentale per ogni individuo. Con una varietà di corsi che spaziano dalle competenze tecniche alle soft skills, abbiamo qualcosa per tutti. Unisciti a noi e inizia a scrivere la tua storia di successo con Proteos.</p>
         </div>
-        <div class="split-media"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=70" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="/img/photos/chi2.jpg" alt="" width="1200" height="800" loading="lazy" /></div>
       </div>
     </section>
 
     <section class="section section-white split">
       <div class="container split-inner">
-        <div class="split-media"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=70" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="/img/photos/chi3.jpg" alt="" width="1200" height="800" loading="lazy" /></div>
         <div class="split-text">
           <h2>Mission</h2>
           <p>In Proteos, crediamo che ogni giorno sia un’opportunità per imparare e crescere. I nostri corsi non sono solo un modo per acquisire competenze, ma un’esperienza trasformativa che ti prepara ad affrontare le sfide del mondo moderno. Siamo qui per supportarti nel tuo viaggio, offrendoti non solo conoscenze, ma anche la fiducia necessaria per affrontare il futuro. Con una rete di professionisti e formatori esperti, ogni lezione è un passo verso il tuo successo. Non aspettare oltre, il tuo futuro inizia con noi.</p>
@@ -142,14 +141,14 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>© 2026 Proteos S.r.l. Impresa Sociale · P.IVA / C.F. 03838230823 · REA AG-228657</p>
-        <p class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
+        <p class="footer-legal"><a href="/privacy-policy/">Privacy Policy</a><a href="/cookie-policy/">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
       </div>
     </div>
   </footer>
 
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci consenso cookie" hidden>
     <div class="container cookie-inner">
-      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="#">Cookie Policy</a></p>
+      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="/cookie-policy/">Cookie Policy</a></p>
       <div class="cookie-buttons">
         <button type="button" data-consent="deny">Rifiuta</button>
         <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>

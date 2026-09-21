@@ -16,10 +16,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="/img/favicon-64.png" />
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://images.unsplash.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&family=Roboto:wght@300;500;700&family=Playfair+Display:wght@700&family=Lato:wght@700;900&display=swap" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/open-sans-400-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <link rel="stylesheet" href="/style.css" />
   
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Proteos S.r.l. Impresa Sociale","alternateName":"Proteos","url":"https://proteosforma.it/","logo":"https://proteosforma.it/img/logo.png","email":"proteos@arubapec.it","vatID":"IT03838230823","taxID":"03838230823","address":{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"},"areaServed":"Sicilia"}</script>
@@ -128,6 +127,7 @@
           <input class="input" id="f-subject" name="oggetto" type="text" placeholder="Oggetto del messaggio" />
           <label class="sr-only" for="f-msg">Messaggio</label>
           <textarea class="input" id="f-msg" name="messaggio" rows="6" placeholder="Messaggio" required></textarea>
+          <p class="form-privacy"><label><input type="checkbox" name="privacy" required /> Ho letto l’<a href="/privacy-policy/">informativa privacy</a> e acconsento al trattamento dei dati per essere ricontattato.</label></p>
           <div class="form-bottom">
             <label class="captcha"><span>2 + 15 = </span><input class="input captcha-input" name="captcha" type="text" inputmode="numeric" size="2" required /></label>
             <button class="btn btn-form" type="submit">Invia messaggio</button>
@@ -179,14 +179,14 @@
     <div class="footer-bottom">
       <div class="container footer-bottom-inner">
         <p>© 2026 Proteos S.r.l. Impresa Sociale · P.IVA / C.F. 03838230823 · REA AG-228657</p>
-        <p class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
+        <p class="footer-legal"><a href="/privacy-policy/">Privacy Policy</a><a href="/cookie-policy/">Cookie Policy</a><button type="button" class="link-btn" id="cookie-manage">Gestisci cookie</button></p>
       </div>
     </div>
   </footer>
 
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Gestisci consenso cookie" hidden>
     <div class="container cookie-inner">
-      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="#">Cookie Policy</a></p>
+      <p>Usiamo cookie tecnici e, previo consenso, cookie di terze parti (es. mappe) per migliorare la tua esperienza. <a href="/cookie-policy/">Cookie Policy</a></p>
       <div class="cookie-buttons">
         <button type="button" data-consent="deny">Rifiuta</button>
         <button type="button" class="cookie-accept" data-consent="accept">Accetta</button>
