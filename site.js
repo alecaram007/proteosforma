@@ -97,11 +97,11 @@
     });
   });
 
-  /* ----- mappa contatti (Leaflet self-hosted, tile OSM caricate solo dopo il clic) ----- */
-  var mapBtn = document.getElementById('map-consent');
-  if (mapBtn) {
-    mapBtn.addEventListener('click', function () {
-      var box = document.getElementById('map-box');
+  /* ----- mappa contatti (Leaflet self-hosted, tile OpenStreetMap) ----- */
+  var mapBox = document.getElementById('map-box');
+  if (mapBox) {
+    (function () {
+      var box = mapBox;
       var sedi = JSON.parse(box.dataset.sedi || '[]');
       var css = document.createElement('link');
       css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.css';
@@ -121,14 +121,14 @@
         sedi.forEach(function (s, i) {
           var icon = L.divIcon({ className: 'map-pin', html: '<span>' + letters[i] + '</span>', iconSize: [34, 42], iconAnchor: [17, 42], popupAnchor: [0, -38] });
           var m = L.marker([s.lat, s.lon], { icon: icon }).addTo(map);
-          m.bindPopup('<strong>' + s.title + '</strong><br>' + s.addr + '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lon + '" target="_blank" rel="noopener">Indicazioni stradali</a>');
+          m.bindPopup({ maxWidth: 220 }, '')
+          .bindPopup('<strong>' + s.title + '</strong><br>' + s.addr + '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lon + '" target="_blank" rel="noopener">Indicazioni stradali</a>');
           group.push(m);
         });
         map.fitBounds(L.featureGroup(group).getBounds().pad(0.35));
-        group[0].openPopup();
       };
       document.head.appendChild(js);
-    });
+    })();
   }
 
   /* ----- cookie banner ----- */

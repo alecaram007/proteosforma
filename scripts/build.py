@@ -484,9 +484,7 @@ def build_contatti():
           <img class="hero-logo-small" src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" />
         </div>
         <div class="hero-side">
-          <div class="map-box" id="map-box" data-sedi='[{{"lat":37.3191283,"lon":13.6662229,"title":"Sede direzionale e di erogazione","addr":"Via Cesare Sessa, 58 – 92026 Favara (AG)"}},{{"lat":37.3172090,"lon":13.6588283,"title":"Sede legale","addr":"Cortile Dulcetta, 39 – 92026 Favara (AG)"}}]'>
-            <button type="button" class="map-consent" id="map-consent">Fai clic per caricare la mappa (OpenStreetMap) e visualizzare le nostre sedi</button>
-          </div>
+          <div class="map-box" id="map-box" data-sedi='[{{"lat":37.3191283,"lon":13.6662229,"title":"Sede direzionale e di erogazione","addr":"Via Cesare Sessa, 58 – 92026 Favara (AG)"}},{{"lat":37.3172090,"lon":13.6588283,"title":"Sede legale","addr":"Cortile Dulcetta, 39 – 92026 Favara (AG)"}}]'></div>
           <ul class="map-legend">
             <li><span class="pin pin-a">A</span><div><strong>Sede direzionale e di erogazione</strong><br>Via Cesare Sessa, 58 – 92026 Favara (AG)</div></li>
             <li><span class="pin pin-b">B</span><div><strong>Sede legale</strong><br>Cortile Dulcetta, 39 – 92026 Favara (AG)</div></li>
@@ -570,12 +568,12 @@ def build_legal():
           <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
           <tbody>
             <tr><td>proteos-consent</td><td>Tecnico (localStorage)</td><td>Memorizza la scelta espressa nel banner dei cookie.</td><td>Fino a cancellazione da parte dell’utente</td></tr>
-            <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>La mappa nella pagina Contatti viene caricata solo dopo un clic esplicito dell’utente; il fornitore (OpenStreetMap Foundation) può ricevere l’indirizzo IP.</td><td>Sessione</td></tr>
+            <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>Nella pagina Contatti le immagini della mappa sono scaricate dai server di OpenStreetMap Foundation, che riceve l’indirizzo IP dell’utente. Non vengono impostati cookie.</td><td>Sessione</td></tr>
           </tbody>
         </table>
         <p>Il sito <strong>non</strong> utilizza cookie di profilazione, strumenti di analisi statistica né pixel pubblicitari. I caratteri tipografici e le immagini sono ospitati sullo stesso server del sito e non comportano richieste verso servizi terzi.</p>
         <h2>Gestione delle preferenze</h2>
-        <p>Al primo accesso viene mostrato un banner con cui accettare o rifiutare i contenuti di terze parti. La scelta può essere modificata in qualsiasi momento tramite il link “Gestisci cookie” nel piè di pagina o cancellando i dati del sito dalle impostazioni del browser. Le istruzioni per i principali browser: <a href="https://support.google.com/chrome/answer/95647" rel="noopener" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/it/kb/Gestione%20dei%20cookie" rel="noopener" target="_blank">Firefox</a>, <a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" rel="noopener" target="_blank">Safari</a>, <a href="https://support.microsoft.com/it-it/microsoft-edge" rel="noopener" target="_blank">Edge</a>.</p>
+        <p>Al primo accesso viene mostrato un banner informativo. La scelta può essere modificata in qualsiasi momento tramite il link “Gestisci cookie” nel piè di pagina o cancellando i dati del sito dalle impostazioni del browser. Le istruzioni per i principali browser: <a href="https://support.google.com/chrome/answer/95647" rel="noopener" target="_blank">Chrome</a>, <a href="https://support.mozilla.org/it/kb/Gestione%20dei%20cookie" rel="noopener" target="_blank">Firefox</a>, <a href="https://support.apple.com/it-it/guide/safari/sfri11471/mac" rel="noopener" target="_blank">Safari</a>, <a href="https://support.microsoft.com/it-it/microsoft-edge" rel="noopener" target="_blank">Edge</a>.</p>
         <h2>Riferimenti normativi</h2>
         <p>Regolamento (UE) 2016/679 (GDPR), D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018, Linee guida del Garante per la protezione dei dati personali sui cookie del 10 giugno 2021.</p>
     """
