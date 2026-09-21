@@ -121,8 +121,7 @@
         sedi.forEach(function (s, i) {
           var icon = L.divIcon({ className: 'map-pin', html: '<span>' + letters[i] + '</span>', iconSize: [34, 42], iconAnchor: [17, 42], popupAnchor: [0, -38] });
           var m = L.marker([s.lat, s.lon], { icon: icon }).addTo(map);
-          m.bindPopup({ maxWidth: 220 }, '')
-          .bindPopup('<strong>' + s.title + '</strong><br>' + s.addr + '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lon + '" target="_blank" rel="noopener">Indicazioni stradali</a>');
+          m.bindPopup('<strong>' + s.title + '</strong><br>' + s.addr + '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lon + '" target="_blank" rel="noopener">Indicazioni stradali</a>', { maxWidth: 220 });
           group.push(m);
         });
         map.fitBounds(L.featureGroup(group).getBounds().pad(0.35));
