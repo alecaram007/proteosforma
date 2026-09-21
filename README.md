@@ -30,7 +30,7 @@ CNAME  robots.txt  sitemap.xml
 ## Dashboard (avvisi, corsi, bandi)
 
 Su **https://proteosforma.it/admin/** si pubblicano in autonomia avvisi, corsi con locandina e bandi, senza toccare il codice.
-Il login usa Supabase Auth (progetto `Gestionale-Proteos`, tabelle con prefisso `web_`, bucket `web-media`); possono accedere solo le email presenti nella tabella `web_admins`.
+Il login usa Supabase Auth (progetto Supabase dedicato `proteosforma`, tabelle con prefisso `web_`, bucket `web-media`); possono accedere solo le email presenti nella tabella `web_admins`.
 
 - **Avvisi**: titolo, numero, testi, destinatari, indennità, PDF, stato e pubblicazione. Ogni avviso ha la pagina `/avviso/<slug>/`.
 - **Corsi**: collegati a un avviso, con locandina caricata dalla dashboard, durata, indennità, sede e stato. Compaiono in `/corsi/` e dentro l'avviso.
