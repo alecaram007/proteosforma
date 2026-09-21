@@ -457,3 +457,28 @@ main { padding-top: var(--header-h); }
 .map-legend strong { color: #fff; }
 .pin { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--navy); font-weight: 800; font-size: 13px; margin-top: 2px; }
 @media (max-width: 600px) { .map-legend { grid-template-columns: 1fr; } }
+
+/* ---------- Contenuti dinamici (CMS) ---------- */
+.cms-loading, .cms-empty, .cms-error { text-align: center; color: #888; padding: 30px 0; }
+.stato { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.st-plan { background: #eceff3; color: #4c5a68; }
+.st-start { background: #fff2cc; color: #8a5a00; }
+.st-open { background: #d7f5e3; color: #0f6b3a; }
+.st-run { background: #dcefff; color: #0a5290; }
+.st-done { background: #f1e3f7; color: #6b2d82; }
+.avviso-stato { margin: -10px 0 18px; }
+.avviso-stato .stato { font-size: 12px; padding: 6px 14px; }
+.avviso-allegato { text-align: center; margin: 30px 0 0; }
+.poster figcaption .stato { margin-bottom: 8px; }
+.poster-desc { color: #666; margin-top: 6px; }
+.corsi-page { padding: 50px 0 80px; }
+.corsi-title { font-size: 40px; font-weight: 500; color: var(--navy); margin-bottom: 8px; }
+.corsi-intro { max-width: 720px; margin-bottom: 30px; font-size: 15px; }
+.poster-link > a { position: relative; display: block; }
+.poster-link > a .stato { position: absolute; top: 12px; left: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, .2); }
+.poster-placeholder { aspect-ratio: 800 / 1131; display: flex; align-items: center; justify-content: center; padding: 30px; text-align: center; font-weight: 700; color: #fff; background: linear-gradient(160deg, var(--navy), var(--brand)); }
+.poster figcaption strong a { color: var(--navy); }
+.poster-avviso { color: var(--brand-dark); font-weight: 600; }
+.poster-more { display: inline-block; margin-top: 10px; font-weight: 700; color: var(--brand-dark); }
+.bando-detail h2 { font-family: var(--font-body); font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+.bando-detail p { font-size: 15px; line-height: 1.8em; color: #444; }

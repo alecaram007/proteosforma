@@ -34,7 +34,7 @@
           <li class=""><a href="/">Home</a></li>
           <li class=""><a href="/chi-siamo/">Chi siamo</a></li>
           <li class=""><a href="/corsi/">Corsi</a></li>
-          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu"><li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC</a></li><li><a href="/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
+          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu" data-cms="nav-avvisi"><li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li><li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
           <li class=""><a href="/bandi-e-avvisi/">Bandi e Avvisi</a></li>
           <li class=""><a href="/news/">News</a></li>
           <li class=""><a href="/contatti/">Contatti</a></li>
@@ -70,6 +70,7 @@
           <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
           <tbody>
             <tr><td>proteos-consent</td><td>Tecnico (localStorage)</td><td>Memorizza la scelta espressa nel banner dei cookie.</td><td>Fino a cancellazione da parte dell’utente</td></tr>
+            <tr><td>Supabase (contenuti)</td><td>Terze parti</td><td>Avvisi, corsi e bandi sono caricati dal servizio Supabase (server in Francoforte, UE), che riceve l’indirizzo IP dell’utente per servire la richiesta. Non vengono impostati cookie.</td><td>Sessione</td></tr>
             <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>Nella pagina Contatti le immagini della mappa sono scaricate dai server di OpenStreetMap Foundation, che riceve l’indirizzo IP dell’utente. Non vengono impostati cookie.</td><td>Sessione</td></tr>
           </tbody>
         </table>
@@ -104,11 +105,11 @@
       </nav>
       <nav class="footer-links" aria-label="Corsi finanziati">
         <h4>Corsi finanziati</h4>
-        <ul>
-          <li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC – Corsi gratuiti</a></li>
-          <li><a href="/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
-          <li><a href="/avviso-7-2023/">Avviso 7/2023</a></li>
-          <li><a href="/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
+        <ul data-cms="nav-avvisi">
+          <li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li>
+          <li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li>
+          <li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li>
+          <li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li>
         </ul>
       </nav>
       <div class="footer-contact">
@@ -143,5 +144,8 @@
   </button>
 
   <script src="/site.js" defer></script>
+  <script src="/config.js" defer></script>
+  <script src="/vendor/supabase/supabase.js" defer></script>
+  <script src="/cms.js" defer></script>
 </body>
 </html>

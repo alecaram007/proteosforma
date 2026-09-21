@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Corsi - Proteos</title>
-  <meta name="description" content="I corsi di Proteos." />
+  <meta name="description" content="I corsi di formazione professionale gratuiti di Proteos: locandine, stato di avvio e avvisi di riferimento." />
   <link rel="canonical" href="https://proteosforma.it/corsi/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Proteos S.r.l. Impresa Sociale" />
   <meta property="og:title" content="Corsi - Proteos" />
-  <meta property="og:description" content="I corsi di Proteos." />
+  <meta property="og:description" content="I corsi di formazione professionale gratuiti di Proteos: locandine, stato di avvio e avvisi di riferimento." />
   <meta property="og:url" content="https://proteosforma.it/corsi/" />
   <meta property="og:image" content="https://proteosforma.it/img/logo.png" />
   <meta name="theme-color" content="#0a7dbe" />
@@ -34,7 +34,7 @@
           <li class=""><a href="/">Home</a></li>
           <li class=""><a href="/chi-siamo/">Chi siamo</a></li>
           <li class="current"><a href="/corsi/">Corsi</a></li>
-          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu"><li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC</a></li><li><a href="/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
+          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu" data-cms="nav-avvisi"><li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li><li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
           <li class=""><a href="/bandi-e-avvisi/">Bandi e Avvisi</a></li>
           <li class=""><a href="/news/">News</a></li>
           <li class=""><a href="/contatti/">Contatti</a></li>
@@ -57,9 +57,11 @@
 
   <main id="main">
 
-    <section class="section section-white plain-page">
+    <section class="section section-white corsi-page">
       <div class="container">
-        <h1 class="page-title">Corsi</h1>
+        <h1 class="page-title corsi-title">Corsi</h1>
+        <p class="corsi-intro">Tutti i corsi attivi e in programmazione di Proteos. Clicca una locandina per aprire l’avviso di riferimento con requisiti, indennità e modulo di iscrizione.</p>
+        <div data-cms="corsi"></div>
       </div>
     </section>
 
@@ -85,11 +87,11 @@
       </nav>
       <nav class="footer-links" aria-label="Corsi finanziati">
         <h4>Corsi finanziati</h4>
-        <ul>
-          <li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC – Corsi gratuiti</a></li>
-          <li><a href="/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
-          <li><a href="/avviso-7-2023/">Avviso 7/2023</a></li>
-          <li><a href="/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
+        <ul data-cms="nav-avvisi">
+          <li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li>
+          <li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li>
+          <li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li>
+          <li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li>
         </ul>
       </nav>
       <div class="footer-contact">
@@ -124,5 +126,8 @@
   </button>
 
   <script src="/site.js" defer></script>
+  <script src="/config.js" defer></script>
+  <script src="/vendor/supabase/supabase.js" defer></script>
+  <script src="/cms.js" defer></script>
 </body>
 </html>

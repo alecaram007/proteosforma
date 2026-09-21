@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard - Proteos</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png" />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <!-- LOGIN -->
+  <section id="view-login" class="login" hidden>
+    <form id="login-form" class="login-card" novalidate>
+      <img src="/img/logo.png" alt="Proteos" width="1359" height="505" />
+      <h1>Dashboard sito</h1>
+      <p class="muted">Accedi per pubblicare avvisi, corsi e bandi su proteosforma.it</p>
+      <label>Email<input type="email" name="email" autocomplete="username" required /></label>
+      <label>Password<input type="password" name="password" autocomplete="current-password" required /></label>
+      <button class="btn btn-primary" type="submit">Accedi</button>
+      <p class="form-msg" id="login-msg" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- APP -->
+  <div id="view-app" class="app" hidden>
+    <header class="topbar">
+      <a class="brand" href="/" target="_blank" rel="noopener"><img src="/img/logo.png" alt="Proteos" width="1359" height="505" /><span>Dashboard</span></a>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="avvisi" role="tab">Avvisi</button>
+        <button class="tab" data-tab="corsi" role="tab">Corsi</button>
+        <button class="tab" data-tab="bandi" role="tab">Bandi</button>
+      </nav>
+      <div class="user">
+        <span id="user-email" class="muted"></span>
+        <button class="btn btn-ghost" id="btn-password" type="button">Cambia password</button>
+        <button class="btn btn-ghost" id="btn-logout" type="button">Esci</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar">
+        <div>
+          <h2 id="panel-title">Avvisi</h2>
+          <p class="muted" id="panel-hint">Gli avvisi regionali (POC, GOL, ecc.). Ogni avviso ha la sua pagina pubblica e raccoglie i corsi collegati.</p>
+        </div>
+        <div class="toolbar-actions">
+          <a class="btn btn-ghost" id="btn-preview" href="/corsi/" target="_blank" rel="noopener">Vedi sul sito</a>
+          <button class="btn btn-primary" id="btn-new" type="button">+ Nuovo</button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div id="list" class="list"></div>
+    </main>
+  </div>
+
+  <!-- EDITOR (pannello laterale) -->
+  <div id="drawer" class="drawer" hidden>
+    <div class="drawer-backdrop" data-close></div>
+    <form id="editor" class="drawer-panel" novalidate>
+      <header class="drawer-head">
+        <h3 id="editor-title">Nuovo</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Chiudi">&times;</button>
+      </header>
+      <div id="editor-fields" class="drawer-body"></div>
+      <footer class="drawer-foot">
+        <button type="button" class="btn btn-danger" id="btn-delete" hidden>Elimina</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost" data-close>Annulla</button>
+        <button type="submit" class="btn btn-primary" id="btn-save">Salva</button>
+      </footer>
+      <p class="form-msg" id="editor-msg" role="alert"></p>
+    </form>
+  </div>
+
+  <!-- CAMBIA PASSWORD -->
+  <div id="pw-modal" class="drawer" hidden>
+    <div class="drawer-backdrop" data-close></div>
+    <form id="pw-form" class="drawer-panel drawer-small" novalidate>
+      <header class="drawer-head"><h3>Cambia password</h3><button type="button" class="icon-btn" data-close aria-label="Chiudi">&times;</button></header>
+      <div class="drawer-body">
+        <label>Nuova password (minimo 8 caratteri)<input type="password" name="pw1" minlength="8" autocomplete="new-password" required /></label>
+        <label>Ripeti password<input type="password" name="pw2" minlength="8" autocomplete="new-password" required /></label>
+      </div>
+      <footer class="drawer-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-close>Annulla</button><button type="submit" class="btn btn-primary">Aggiorna</button></footer>
+      <p class="form-msg" id="pw-msg" role="alert"></p>
+    </form>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/config.js"></script>
+  <script src="/vendor/supabase/supabase.js"></script>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

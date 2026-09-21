@@ -35,10 +35,10 @@ NAV = [
     ("Chi siamo", "/chi-siamo/"),
     ("Corsi", "/corsi/"),
     ("Corsi finanziati", "#", [
-        ("Avviso 1/2026 POC", "/avviso-1-2026-poc/"),
-        ("Avviso 6/2025", "/avviso-6-2025/"),
-        ("Avviso 7/2023", "/avviso-7-2023/"),
-        ("Avviso 20/2024", "/avviso-20-2024/"),
+        ("Avviso POC n. 1/2026", "/avviso/avviso-1-2026-poc/"),
+        ("Avviso 6/2025", "/avviso/avviso-6-2025/"),
+        ("Avviso 7/2023", "/avviso/avviso-7-2023/"),
+        ("Avviso 20/2024", "/avviso/avviso-20-2024/"),
     ]),
     ("Bandi e Avvisi", "/bandi-e-avvisi/"),
     ("News", "/news/"),
@@ -69,11 +69,11 @@ def nav_html(current: str) -> str:
         subs = item[2] if len(item) > 2 else None
         active = ""
         if subs:
-            if any(current == s[1] for s in subs):
+            if current.startswith("/avviso/") or any(current == s[1] for s in subs):
                 active = " current"
             out.append(
                 f'<li class="has-sub{active}"><a href="#" aria-haspopup="true" aria-expanded="false">{label}</a>'
-                '<ul class="sub-menu">'
+                '<ul class="sub-menu" data-cms="nav-avvisi">'
                 + "".join(f'<li><a href="{BASE}{s[1]}">{s[0]}</a></li>' for s in subs)
                 + "</ul></li>"
             )
@@ -162,11 +162,11 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
       </nav>
       <nav class="footer-links" aria-label="Corsi finanziati">
         <h4>Corsi finanziati</h4>
-        <ul>
-          <li><a href="{BASE}/avviso-1-2026-poc/">Avviso 1/2026 POC – Corsi gratuiti</a></li>
-          <li><a href="{BASE}/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
-          <li><a href="{BASE}/avviso-7-2023/">Avviso 7/2023</a></li>
-          <li><a href="{BASE}/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
+        <ul data-cms="nav-avvisi">
+          <li><a href="{BASE}/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li>
+          <li><a href="{BASE}/avviso/avviso-6-2025/">Avviso 6/2025</a></li>
+          <li><a href="{BASE}/avviso/avviso-7-2023/">Avviso 7/2023</a></li>
+          <li><a href="{BASE}/avviso/avviso-20-2024/">Avviso 20/2024</a></li>
         </ul>
       </nav>
       <div class="footer-contact">
@@ -201,6 +201,9 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   </button>
 
   <script src="{BASE}/site.js" defer></script>
+  <script src="{BASE}/config.js" defer></script>
+  <script src="{BASE}/vendor/supabase/supabase.js" defer></script>
+  <script src="{BASE}/cms.js" defer></script>
 </body>
 </html>
 """
@@ -305,7 +308,7 @@ def build_home():
          "/corsi/"),
         ("Corsi finanziati", IMG["card2"],
          "I corsi finanziati dalla Regione Sicilia rappresentano un’opportunità imperdibile per chi desidera ampliare le proprie competenze e migliorare il proprio profilo professionale. Grazie a un sostegno concreto, puoi accedere a programmi formativi di alta qualità senza gravare sul tuo budget. Ogni corso è pensato per rispondere alle esigenze del mercato del lavoro, fornendo conoscenze pratiche e teoriche che ti prepareranno ad affrontare le sfide del futuro. Unisciti a noi e scopri come il tuo talento può brillare attraverso un percorso formativo che valorizza le tue aspirazioni e ti guida verso nuove opportunità.",
-         "/avviso-6-2025/"),
+         "/corsi/"),
         ("Bandi e Avvisi", IMG["card3"],
          "Bandi e avvisi per docenti e studenti sono fondamentali per rimanere aggiornati sulle opportunità di crescita e sviluppo professionale. La nostra piattaforma offre un accesso facile e veloce a tutte le informazioni necessarie, consentendo a insegnanti e allievi di scoprire corsi, eventi e risorse che possono arricchire la loro esperienza educativa. Siamo impegnati a fornire un supporto costante, affinché ogni membro della nostra comunità possa cogliere al volo le occasioni che si presentano. Unisciti a noi per esplorare un mondo di possibilità e dare vita ai tuoi sogni accademici.",
          "/bandi-e-avvisi/"),
@@ -402,13 +405,23 @@ def build_chi_siamo():
 
 def build_corsi():
     body = f"""
-    <section class="section section-white plain-page">
+    <section class="section section-white corsi-page">
       <div class="container">
-        <h1 class="page-title">Corsi</h1>
+        <h1 class="page-title corsi-title">Corsi</h1>
+        <p class="corsi-intro">Tutti i corsi attivi e in programmazione di {BRAND}. Clicca una locandina per aprire l’avviso di riferimento con requisiti, indennità e modulo di iscrizione.</p>
+        <div data-cms="corsi"></div>
       </div>
     </section>
 """
-    return page(path="/corsi/", title="Corsi", description=f"I corsi di {BRAND}.", body=body)
+    return page(path="/corsi/", title="Corsi", description=f"I corsi di formazione professionale gratuiti di {BRAND}: locandine, stato di avvio e avvisi di riferimento.", body=body)
+
+
+def build_avviso_template():
+    body = f"""
+    <div data-cms="avviso"><section class="section section-white"><div class="container"><p class="cms-loading">Caricamento avviso…</p></div></section></div>
+    <template id="cms-form-template">{contact_form(a=9, b=4)}</template>
+"""
+    return page(path="/avviso/", title="Avviso", description=f"Avvisi e corsi finanziati di {BRAND}.", body=body)
 
 
 def build_news():
@@ -427,52 +440,16 @@ def build_news():
 
 
 def build_bandi():
-    posts = [
-        ("Bando pubblico di selezione personale non docente", "7 Apr 2026",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando pubblico di selezione docenti", "3 Apr 2026",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando pubblico di selezione allievi", "30 Mar 2026",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando pubblico di selezione allievi", "7 Feb 2026",
-         "REGIONE SICILIANA Assessorato regionale della famiglia, delle politiche sociali e del lavoro…"),
-        ("Bando pubblico di selezione personale non docente", "7 Feb 2026",
-         "REGIONE SICILIANA Assessorato regionale della famiglia, delle politiche sociali e del lavoro…"),
-        ("Bando pubblico di selezione personale docente", "7 Feb 2026",
-         "REGIONE SICILIANA Assessorato regionale della famiglia, delle politiche sociali e del lavoro…"),
-        ("Bando di selezione pubblica per l’individuazione di personale non docente", "2 Set 2025",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando di selezione pubblica per l’individuazione di personale docente", "2 Set 2025",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando di selezione pubblica per l’individuazione di personale non docente", "20 Ago 2025",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-        ("Bando di selezione pubblica per l’individuazione di personale docente", "20 Ago 2025",
-         "REGIONE SICILIANA Assessorato dell’Istruzione e della Formazione Professionale Dipartimento della…"),
-    ]
-    items = "".join(
-        f"""
-          <article class="post">
-            <h2><a href="{BASE}/contatti/">{t}</a></h2>
-            <p class="post-meta">{d}</p>
-            <p>{ex}</p>
-            <a class="more" href="{BASE}/contatti/">leggi tutto</a>
-          </article>"""
-        for t, d, ex in posts
-    )
     body = f"""
     <section class="section section-white blog-page">
       <div class="container">
         <h1 class="blog-title">Bandi e Avvisi</h1>
-        <div class="blog-sheet">
-          <div class="posts">{items}
-          </div>
-          <p class="pagination"><a href="#">« Post precedenti</a></p>
-        </div>
+        <div class="blog-sheet" data-cms="bandi"><p class="cms-loading">Caricamento…</p></div>
       </div>
     </section>
 """
     return page(path="/bandi-e-avvisi/", title="Bandi e Avvisi",
-                description=f"Bandi e avvisi per docenti, personale e allievi pubblicati da {BRAND}.", body=body)
+                description=f"Bandi e avvisi di selezione per allievi, docenti e personale pubblicati da {BRAND}.", body=body)
 
 
 def build_contatti():
@@ -568,6 +545,7 @@ def build_legal():
           <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
           <tbody>
             <tr><td>proteos-consent</td><td>Tecnico (localStorage)</td><td>Memorizza la scelta espressa nel banner dei cookie.</td><td>Fino a cancellazione da parte dell’utente</td></tr>
+            <tr><td>Supabase (contenuti)</td><td>Terze parti</td><td>Avvisi, corsi e bandi sono caricati dal servizio Supabase (server in Francoforte, UE), che riceve l’indirizzo IP dell’utente per servire la richiesta. Non vengono impostati cookie.</td><td>Sessione</td></tr>
             <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>Nella pagina Contatti le immagini della mappa sono scaricate dai server di OpenStreetMap Foundation, che riceve l’indirizzo IP dell’utente. Non vengono impostati cookie.</td><td>Sessione</td></tr>
           </tbody>
         </table>
@@ -676,9 +654,10 @@ def main():
     write("news/index.html", build_news())
     write("bandi-e-avvisi/index.html", build_bandi())
     write("contatti/index.html", build_contatti())
-    for slug, content in {**build_avvisi(), **build_legal()}.items():
+    write("avviso/index.html", build_avviso_template())
+    for slug, content in build_legal().items():
         write(f"{slug}/index.html", content)
-    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso-1-2026-poc/", "/avviso-6-2025/", "/avviso-7-2023/", "/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
+    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso/avviso-1-2026-poc/", "/avviso/avviso-6-2025/", "/avviso/avviso-7-2023/", "/avviso/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)

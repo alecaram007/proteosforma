@@ -34,7 +34,7 @@
           <li class="current"><a href="/">Home</a></li>
           <li class=""><a href="/chi-siamo/">Chi siamo</a></li>
           <li class=""><a href="/corsi/">Corsi</a></li>
-          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu"><li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC</a></li><li><a href="/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
+          <li class="has-sub"><a href="#" aria-haspopup="true" aria-expanded="false">Corsi finanziati</a><ul class="sub-menu" data-cms="nav-avvisi"><li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li><li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li><li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li><li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li></ul></li>
           <li class=""><a href="/bandi-e-avvisi/">Bandi e Avvisi</a></li>
           <li class=""><a href="/news/">News</a></li>
           <li class=""><a href="/contatti/">Contatti</a></li>
@@ -89,7 +89,7 @@
               <h4>Corsi finanziati</h4>
               <p>I corsi finanziati dalla Regione Sicilia rappresentano un’opportunità imperdibile per chi desidera ampliare le proprie competenze e migliorare il proprio profilo professionale. Grazie a un sostegno concreto, puoi accedere a programmi formativi di alta qualità senza gravare sul tuo budget. Ogni corso è pensato per rispondere alle esigenze del mercato del lavoro, fornendo conoscenze pratiche e teoriche che ti prepareranno ad affrontare le sfide del futuro. Unisciti a noi e scopri come il tuo talento può brillare attraverso un percorso formativo che valorizza le tue aspirazioni e ti guida verso nuove opportunità.</p>
             </div>
-            <a class="btn btn-square" href="/avviso-6-2025/">Scopri di più</a>
+            <a class="btn btn-square" href="/corsi/">Scopri di più</a>
           </article>
           <article class="card">
             <img src="/img/photos/card3.jpg" alt="" width="800" height="541" loading="lazy" />
@@ -125,11 +125,11 @@
       </nav>
       <nav class="footer-links" aria-label="Corsi finanziati">
         <h4>Corsi finanziati</h4>
-        <ul>
-          <li><a href="/avviso-1-2026-poc/">Avviso 1/2026 POC – Corsi gratuiti</a></li>
-          <li><a href="/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
-          <li><a href="/avviso-7-2023/">Avviso 7/2023</a></li>
-          <li><a href="/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
+        <ul data-cms="nav-avvisi">
+          <li><a href="/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li>
+          <li><a href="/avviso/avviso-6-2025/">Avviso 6/2025</a></li>
+          <li><a href="/avviso/avviso-7-2023/">Avviso 7/2023</a></li>
+          <li><a href="/avviso/avviso-20-2024/">Avviso 20/2024</a></li>
         </ul>
       </nav>
       <div class="footer-contact">
@@ -164,5 +164,8 @@
   </button>
 
   <script src="/site.js" defer></script>
+  <script src="/config.js" defer></script>
+  <script src="/vendor/supabase/supabase.js" defer></script>
+  <script src="/cms.js" defer></script>
 </body>
 </html>

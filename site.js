@@ -56,46 +56,43 @@
   }
 
   /* ----- contact forms: validazione + captcha aritmetico + mailto ----- */
-  var EMAIL = 'proteos@arubapec.it';
-  document.querySelectorAll('.contact-form').forEach(function (form) {
-    var status = form.querySelector('.form-status');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var ok = true;
-      form.querySelectorAll('.input[required]').forEach(function (el) {
-        var valid = el.value.trim() !== '' && (el.type !== 'email' || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value));
-        el.classList.toggle('invalid', !valid);
-        if (!valid) ok = false;
+  var EMAIL = 'proteos1@libero.it';
+  function initForms(scope) {
+    (scope || document).querySelectorAll('.contact-form').forEach(function (form) {
+      if (form.dataset.ready) return;
+      form.dataset.ready = '1';
+      var status = form.querySelector('.form-status');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var ok = true;
+        form.querySelectorAll('.input[required]').forEach(function (el) {
+          var valid = el.value.trim() !== '' && (el.type !== 'email' || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value));
+          el.classList.toggle('invalid', !valid);
+          if (!valid) ok = false;
+        });
+        var privacy = form.querySelector('input[name="privacy"]');
+        if (privacy && !privacy.checked) { privacy.closest('.form-privacy').classList.add('invalid'); ok = false; }
+        else if (privacy) { privacy.closest('.form-privacy').classList.remove('invalid'); }
+        var a = parseInt(form.dataset.a, 10), b = parseInt(form.dataset.b, 10);
+        var captcha = form.querySelector('.captcha-input');
+        if (parseInt(captcha.value, 10) !== a + b) { captcha.classList.add('invalid'); ok = false; }
+        if (!ok) {
+          status.className = 'form-status error';
+          status.textContent = 'Compila tutti i campi obbligatori, accetta l\'informativa privacy e verifica il risultato della somma.';
+          return;
+        }
+        var f = form.elements;
+        var subject = (f.oggetto.value.trim() || 'Richiesta informazioni') + ' – ' + document.title.split(' - ')[0];
+        var body = ['Nome e Cognome: ' + f.nome.value.trim(), 'Telefono: ' + f.telefono.value.trim(), 'Email: ' + f.email.value.trim(), '', f.messaggio.value.trim()].join('\n');
+        window.location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        status.className = 'form-status';
+        status.textContent = 'Grazie! Si aprirà il tuo client di posta per inviare il messaggio.';
+        form.reset();
       });
-      var privacy = form.querySelector('input[name="privacy"]');
-      if (privacy && !privacy.checked) { privacy.closest('.form-privacy').classList.add('invalid'); ok = false; }
-      else if (privacy) { privacy.closest('.form-privacy').classList.remove('invalid'); }
-      var a = parseInt(form.dataset.a, 10), b = parseInt(form.dataset.b, 10);
-      var captcha = form.querySelector('.captcha-input');
-      if (parseInt(captcha.value, 10) !== a + b) {
-        captcha.classList.add('invalid');
-        ok = false;
-      }
-      if (!ok) {
-        status.className = 'form-status error';
-        status.textContent = 'Compila tutti i campi obbligatori, accetta l\'informativa privacy e verifica il risultato della somma.';
-        return;
-      }
-      var f = form.elements;
-      var subject = (f.oggetto.value.trim() || 'Richiesta informazioni') + ' – ' + document.title.split(' - ')[0];
-      var body = [
-        'Nome e Cognome: ' + f.nome.value.trim(),
-        'Telefono: ' + f.telefono.value.trim(),
-        'Email: ' + f.email.value.trim(),
-        '',
-        f.messaggio.value.trim()
-      ].join('\n');
-      window.location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      status.className = 'form-status';
-      status.textContent = 'Grazie! Si aprirà il tuo client di posta per inviare il messaggio.';
-      form.reset();
     });
-  });
+  }
+  initForms(document);
+  window.ProteosForms = { init: initForms };
 
   /* ----- mappa contatti (Leaflet self-hosted, tile OpenStreetMap) ----- */
   var mapBox = document.getElementById('map-box');
