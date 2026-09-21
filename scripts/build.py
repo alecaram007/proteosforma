@@ -15,8 +15,8 @@ PIVA = "03838230823"
 REA = "AG-228657"
 SEDE_LEGALE = "Cortile Dulcetta, 39 Favara AG"
 SEDE_OPERATIVA = "Via Cesare Sessa, 58 Favara AG"
-TEL = ""  # TODO: numero di telefono non ancora disponibile
-EMAIL = "proteos@arubapec.it"
+TEL = "0922 1830492"
+EMAIL = "proteos1@libero.it"
 PEC = "proteos@arubapec.it"
 INDIRIZZO = "Via Cesare Sessa, 58 92026 Favara (AG)"
 ACCREDITAMENTO = "Ente accreditato dalla Regione Siciliana – Codice CIR AD5015 – D.D.G. n. 699 del 29/05/2025"
@@ -35,6 +35,7 @@ NAV = [
     ("Chi siamo", "/chi-siamo/"),
     ("Corsi", "/corsi/"),
     ("Corsi finanziati", "#", [
+        ("Avviso 1/2026 POC", "/avviso-1-2026-poc/"),
         ("Avviso 6/2025", "/avviso-6-2025/"),
         ("Avviso 7/2023", "/avviso-7-2023/"),
         ("Avviso 20/2024", "/avviso-20-2024/"),
@@ -162,6 +163,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
       <nav class="footer-links" aria-label="Corsi finanziati">
         <h4>Corsi finanziati</h4>
         <ul>
+          <li><a href="{BASE}/avviso-1-2026-poc/">Avviso 1/2026 POC – Corsi gratuiti</a></li>
           <li><a href="{BASE}/avviso-6-2025/">Avviso 6/2025 – GOL</a></li>
           <li><a href="{BASE}/avviso-7-2023/">Avviso 7/2023</a></li>
           <li><a href="{BASE}/avviso-20-2024/">Avviso 20/2024 – Assistenti familiari</a></li>
@@ -171,7 +173,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
         <h4>Contatti</h4>
         <ul class="contact-list">
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg><span>{INDIRIZZO}<br><small>Sede legale: {SEDE_LEGALE_FULL}</small></span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg><a href="mailto:{PEC}">{PEC}</a></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg><span><a href="mailto:{EMAIL}">{EMAIL}</a><br><small>PEC: <a href="mailto:{PEC}">{PEC}</a></small></span></li>
           {tel_li()}
         </ul>
         <a class="btn btn-square btn-footer" href="{BASE}/contatti/">Contattaci</a>
@@ -231,7 +233,17 @@ def contact_form(cta: str = "Invia messaggio", a: int = 14, b: int = 14) -> str:
 
 
 def avviso_page(*, slug, number, title_pre, subtitle, intro_hero, intro_body, cards, section_q, section_body, indennita, rilascio, capt):
-    cards_html = "".join(
+    if cards and len(cards[0]) == 4:
+        cards_html = "".join(
+            f"""
+            <figure class="poster">
+              <a href="{BASE}/img/avviso-1-2026/{c[1]}.jpg" target="_blank" rel="noopener"><img src="{BASE}/img/avviso-1-2026/{c[1]}.jpg" alt="Locandina corso {c[0]} – Avviso 1/2026 POC" width="800" height="1131" loading="lazy" /></a>
+              <figcaption><strong>{c[0]}</strong><span>{c[2]}</span><span>Indennità {c[3]}</span></figcaption>
+            </figure>"""
+            for c in cards
+        )
+    else:
+      cards_html = "".join(
         f"""
             <div class="flyer">
               <div class="flyer-top"><img src="{BASE}/img/logo.png" alt="{BRAND}" width="1359" height="505" loading="lazy" /><span class="flyer-eu">Unione Europea · Regione Siciliana</span></div>
@@ -244,7 +256,7 @@ def avviso_page(*, slug, number, title_pre, subtitle, intro_hero, intro_body, ca
               <div class="flyer-foot"><span>Indennità {c[1]}</span><b>{c[2]}</b></div>
             </div>"""
         for c in cards
-    )
+      )
     body = f"""
     <section class="avviso-hero">
       <div class="container">
@@ -256,7 +268,7 @@ def avviso_page(*, slug, number, title_pre, subtitle, intro_hero, intro_body, ca
     <section class="section section-white avviso-body">
       <div class="container narrow">
         <div class="text-brand">{intro_body}</div>
-        {"<h2 class='h-red'>Visualizza la nostra Offerta Formativa</h2><div class='flyers'>" + cards_html + "</div>" if cards else ""}
+        {"<h2 class='h-red'>Visualizza la nostra Offerta Formativa</h2><div class='" + ("posters" if len(cards[0]) == 4 else "flyers") + "'>" + cards_html + "</div>" if cards else ""}
       </div>
     </section>
     <section class="section section-light avviso-q">
@@ -472,9 +484,13 @@ def build_contatti():
           <img class="hero-logo-small" src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" />
         </div>
         <div class="hero-side">
-          <div class="map-box" id="map-box">
-            <button type="button" class="map-consent" id="map-consent">Fai clic per accettare i cookie marketing e abilitare questo contenuto</button>
+          <div class="map-box" id="map-box" data-sedi='[{{"lat":37.3191283,"lon":13.6662229,"title":"Sede direzionale e di erogazione","addr":"Via Cesare Sessa, 58 – 92026 Favara (AG)"}},{{"lat":37.3172090,"lon":13.6588283,"title":"Sede legale","addr":"Cortile Dulcetta, 39 – 92026 Favara (AG)"}}]'>
+            <button type="button" class="map-consent" id="map-consent">Fai clic per caricare la mappa (OpenStreetMap) e visualizzare le nostre sedi</button>
           </div>
+          <ul class="map-legend">
+            <li><span class="pin pin-a">A</span><div><strong>Sede direzionale e di erogazione</strong><br>Via Cesare Sessa, 58 – 92026 Favara (AG)</div></li>
+            <li><span class="pin pin-b">B</span><div><strong>Sede legale</strong><br>Cortile Dulcetta, 39 – 92026 Favara (AG)</div></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -485,8 +501,10 @@ def build_contatti():
           <div class="form-info">
             <h2>Contatti</h2>
             {tel_html()}
-            <h4>Email / PEC</h4>
+            <h4>Email</h4>
             <p><a href="mailto:{EMAIL}">{EMAIL}</a></p>
+            <h4>PEC</h4>
+            <p><a href="mailto:{PEC}">{PEC}</a></p>
             <h4>Sede direzionale e di erogazione</h4>
             <p>{INDIRIZZO}</p>
             <h4>Sede legale</h4>
@@ -618,7 +636,32 @@ def build_avvisi():
         rilascio="A seguito del superamento dell’esame finale, a cui saranno ammessi solo gli allievi che hanno frequentato almeno 70% delle ore complessivamente previste, sarà rilasciato un Attestato di qualifica Professionale EQF 2 in “Assistente Familiare” in coerenza con il Repertorio delle qualificazioni della Regione Siciliana adottato con decreto assessoriale n. 2570 del 26 maggio 2016.",
         capt=(7, 2),
     )
-    return {"avviso-6-2025": a6, "avviso-7-2023": a7, "avviso-20-2024": a20}
+    a1 = avviso_page(
+        slug="avviso-1-2026-poc", number="1/2026", title_pre="Avviso POC n.", subtitle="Corsi gratuiti per disoccupati e inoccupati – Piano Azione e Coesione (POC) Sicilia 2014/2020",
+        intro_hero="Avviso pubblico n. 1/2026 della Regione Siciliana – Assessorato regionale dell’Istruzione e della Formazione Professionale – per la costituzione del Catalogo regionale dell’offerta formativa e la realizzazione di percorsi di qualificazione professionale finanziati dal Piano Azione e Coesione (POC) 2014/2020, Azione 5.1.1 “Piano Regionale dei Servizi Formativi”, e dal Programma FSE+ Sicilia 2021-2027, Priorità 2 “Istruzione e Formazione”, Azione “Formazione permanente”.",
+        intro_body="<p>L’Avviso finanzia percorsi formativi gratuiti rivolti a persone disoccupate e inoccupate, finalizzati al conseguimento di una qualifica professionale riconosciuta e spendibile nel mercato del lavoro. I corsi comprendono un modulo tecnico-professionale e 54 ore obbligatorie di competenze trasversali (sicurezza sul lavoro, diritti e doveri dei lavoratori, competenze digitali di base) e prevedono attività di laboratorio e stage in azienda. Tutti i percorsi sono inseriti nel Catalogo regionale dell’offerta formativa e si svolgono nelle sedi accreditate di Proteos.</p>",
+        cards=[
+            ("Addetto Amministrativo Segretariale", "addetto-amministrativo-segretariale", "600 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Operatore Informatico di Risorse Web", "operatore-informatico-di-risorse-web", "500 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Collaboratore di Sala e Bar", "collaboratore-di-sala-e-bar", "500 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Collaboratore Polivalente nelle Strutture Ricettive e Ristorative", "collaboratore-polivalente-nelle-strutture-ricettive-e-ristorative", "600 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Addetto agli Stucchi e ai Decori", "addetto-agli-stucchi-e-ai-decori", "600 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Addetto alle Murature, Intonaci e Posa Materiali Lapidei", "addetto-alle-murature-intonaci-e-posa-materiali-lapidei", "600 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+            ("Addetto alla Sistemazione e Manutenzione Aree Verdi", "addetto-alla-sistemazione-e-manutenzione-aree-verdi", "500 ore + 54 ore obbligatorie", "giornaliera 5,00 €"),
+        ],
+        section_q="A chi si rivolge l’Avviso?",
+        section_body="""
+        <p>I percorsi formativi sono rivolti a persone <strong>disoccupate, inoccupate e inattive</strong>. Al momento dell’iscrizione i destinatari devono possedere i seguenti requisiti:<br>
+        – essere residenti o domiciliati in Sicilia;<br>
+        – essere in età lavorativa (almeno 18 anni compiuti);<br>
+        – aver assolto il previsto obbligo di istruzione;<br>
+        – possedere il titolo di studio minimo richiesto per il corso scelto.<br>
+        In caso di cittadini non comunitari, è richiesto il possesso di regolare permesso di soggiorno in corso di validità. La partecipazione è completamente gratuita.</p>""",
+        indennita="Agli allievi in possesso dei requisiti richiesti dall’Avviso, che abbiano frequentato almeno il 70% delle ore di formazione previste, è riconosciuta un’indennità di frequenza giornaliera pari a <b>€ 5,00</b>",
+        rilascio="Al termine di ciascun percorso formativo, previo superamento dell’esame finale, sarà rilasciato l’attestato di qualifica professionale in coerenza con il Repertorio delle qualificazioni della Regione Siciliana, con certificazione delle competenze acquisite, ai partecipanti che abbiano frequentato le ore minime previste dal percorso.",
+        capt=(9, 4),
+    )
+    return {"avviso-1-2026-poc": a1, "avviso-6-2025": a6, "avviso-7-2023": a7, "avviso-20-2024": a20}
 
 
 def write(rel: str, content: str):
@@ -637,7 +680,7 @@ def main():
     write("contatti/index.html", build_contatti())
     for slug, content in {**build_avvisi(), **build_legal()}.items():
         write(f"{slug}/index.html", content)
-    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso-6-2025/", "/avviso-7-2023/", "/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
+    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso-1-2026-poc/", "/avviso-6-2025/", "/avviso-7-2023/", "/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)

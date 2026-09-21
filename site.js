@@ -97,18 +97,37 @@
     });
   });
 
-  /* ----- mappa contatti: caricata solo dopo consenso ----- */
+  /* ----- mappa contatti (Leaflet self-hosted, tile OSM caricate solo dopo il clic) ----- */
   var mapBtn = document.getElementById('map-consent');
   if (mapBtn) {
     mapBtn.addEventListener('click', function () {
       var box = document.getElementById('map-box');
-      var iframe = document.createElement('iframe');
-      iframe.title = 'Mappa sede Proteos';
-      iframe.loading = 'lazy';
-      iframe.referrerPolicy = 'no-referrer-when-downgrade';
-      iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=13.640%2C37.300%2C13.690%2C37.335&marker=37.3175%2C13.6635&layer=mapnik';
-      box.innerHTML = '';
-      box.appendChild(iframe);
+      var sedi = JSON.parse(box.dataset.sedi || '[]');
+      var css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.css';
+      document.head.appendChild(css);
+      var js = document.createElement('script');
+      js.src = '/vendor/leaflet/leaflet.js';
+      js.onload = function () {
+        box.innerHTML = '';
+        box.classList.add('map-loaded');
+        var map = L.map(box, { scrollWheelZoom: false });
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+        var letters = ['A', 'B', 'C', 'D'];
+        var group = [];
+        sedi.forEach(function (s, i) {
+          var icon = L.divIcon({ className: 'map-pin', html: '<span>' + letters[i] + '</span>', iconSize: [34, 42], iconAnchor: [17, 42], popupAnchor: [0, -38] });
+          var m = L.marker([s.lat, s.lon], { icon: icon }).addTo(map);
+          m.bindPopup('<strong>' + s.title + '</strong><br>' + s.addr + '<br><a href="https://www.google.com/maps/dir/?api=1&destination=' + s.lat + ',' + s.lon + '" target="_blank" rel="noopener">Indicazioni stradali</a>');
+          group.push(m);
+        });
+        map.fitBounds(L.featureGroup(group).getBounds().pad(0.35));
+        group[0].openPopup();
+      };
+      document.head.appendChild(js);
     });
   }
 

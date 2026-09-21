@@ -430,3 +430,31 @@ main { padding-top: var(--header-h); }
 .form-privacy a { color: #fff; text-decoration: underline; }
 .form-privacy input { margin-right: 6px; accent-color: var(--brand); }
 .form-privacy.invalid { color: #ffd2cf; }
+
+/* ---------- Locandine Avviso 1/2026 ---------- */
+.posters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.poster { margin: 0; background: #fff; border: 1px solid #e3e3e3; box-shadow: 0 2px 12px rgba(0, 0, 0, .06); transition: transform .25s, box-shadow .25s; }
+.poster:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0, 0, 0, .12); }
+.poster img { width: 100%; height: auto; display: block; }
+.poster figcaption { padding: 14px 16px 16px; font-size: 13px; line-height: 1.5; color: #555; border-top: 1px solid #eee; }
+.poster figcaption strong { display: block; color: var(--navy); font-size: 15px; margin-bottom: 4px; }
+.poster figcaption span { display: block; }
+@media (max-width: 980px) { .posters { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .posters { grid-template-columns: 1fr; } }
+
+/* ---------- Mappa sedi ---------- */
+.map-box.map-loaded { background: #e8e8e8; }
+.map-pin { background: none; border: 0; }
+.map-pin span {
+  display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg); background: var(--brand-dark); color: #fff; font-weight: 800; font-size: 15px;
+  border: 3px solid #fff; box-shadow: 0 3px 8px rgba(0, 0, 0, .35);
+}
+.map-pin span { position: relative; top: 4px; }
+.map-box .leaflet-popup-content { font-family: var(--font-body); font-size: 13px; line-height: 1.5; }
+.map-box .leaflet-popup-content a { color: var(--brand-dark); font-weight: 600; }
+.map-legend { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.map-legend li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; color: #fff; font-size: 13px; line-height: 1.5; }
+.map-legend strong { color: #fff; }
+.pin { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: #fff; color: var(--navy); font-weight: 800; font-size: 13px; margin-top: 2px; }
+@media (max-width: 600px) { .map-legend { grid-template-columns: 1fr; } }
