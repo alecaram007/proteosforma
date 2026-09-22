@@ -1,20 +1,14 @@
 /* Rendering lato pubblico dei contenuti gestiti dalla dashboard (Supabase).
    Legge l'API REST con fetch semplici (niente supabase-js: -218 KB per pagina) e tiene
-   in sessionStorage le risposte per 2 minuti, così la navigazione tra le pagine è immediata. */
+   in sessionStorage le risposte per 2 minuti, così la navigazione tra le pagine è immediata.
+   Avvisi e bandi usano render.js (lo stesso codice del server): se la pagina arriva già
+   disegnata dal server (data-ssr) qui si attivano solo modulo e animazioni. */
 (function () {
   'use strict';
   var cfg = window.PROTEOS_CONFIG;
-  if (!cfg || !window.fetch) return;
-
-  var STATI = {
-    in_programmazione:   { label: 'In programmazione',                 cls: 'st-plan' },
-    in_fase_di_avvio:    { label: 'In fase di avvio',                  cls: 'st-start' },
-    in_cerca_di_allievi: { label: 'Corso avviato: iscrizioni aperte',  cls: 'st-open' },
-    in_svolgimento:      { label: 'In svolgimento',                    cls: 'st-run' },
-    in_conclusione:      { label: 'In conclusione',                    cls: 'st-closing' },
-    concluso:            { label: 'Corso concluso',                    cls: 'st-done' }
-  };
-  var MESI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+  var R = window.ProteosRender;
+  if (!cfg || !R || !window.fetch) return;
+  var esc = R.esc, badge = R.badge;
   var TTL = 120000;
 
   /* GET sull'API REST: apikey in query string = richiesta "semplice", senza preflight CORS */
@@ -39,43 +33,31 @@
   }
   function fx(el) { if (window.ProteosFX) window.ProteosFX.scan(el); }
 
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function paras(t) {
-    if (!t) return '';
-    return String(t).split(/\n{2,}/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
-  }
-  function badge(stato) {
-    var s = STATI[stato] || STATI.in_programmazione;
-    return '<span class="stato ' + s.cls + '">' + s.label + '</span>';
-  }
-  function fmtDate(d) {
-    if (!d) return '';
-    var p = d.split('-');
-    return parseInt(p[2], 10) + ' ' + MESI[parseInt(p[1], 10) - 1] + ' ' + p[0];
-  }
   function pathSlug(prefix) {
     var m = location.pathname.match(new RegExp('^/' + prefix + '/([^/]+)/?$'));
     if (m) return decodeURIComponent(m[1]);
     var q = new URLSearchParams(location.search);
     return q.get('s') || q.get('id') || '';
   }
-  /* loghi istituzionali: testo alternativo dal nome del file */
-  var LOGHI_ALT = {
-    'coesione-italia-21-27-sicilia': 'Coesione Italia 21-27 Sicilia',
-    'cofinanziato-ue': 'Cofinanziato dall’Unione europea',
-    'repubblica-italiana': 'Repubblica Italiana',
-    'regione-siciliana': 'Regione Siciliana',
-    'poc-sicilia-14-20': 'POC Sicilia 14-20'
-  };
-  function loghiHtml(t) {
-    var list = String(t || '').split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
-    if (!list.length) return '';
-    return '<div class="avviso-loghi">' + list.map(function (u) {
-      var k = u.split('?')[0].split('/').pop().replace(/\.\w+$/, '');
-      return '<img src="' + esc(u) + '" alt="' + esc(LOGHI_ALT[k] || 'Logo') + '" loading="lazy" decoding="async" />';
-    }).join('') + '</div>';
+  /* titolo, descrizione, indirizzo canonico e indicizzazione quando la pagina è disegnata qui */
+  function setHead(o) {
+    if (o.title) document.title = o.title;
+    var set = function (sel, attr, val) { var el = document.querySelector(sel); if (el && val) el.setAttribute(attr, val); };
+    set('meta[name="description"]', 'content', o.description);
+    set('meta[property="og:title"]', 'content', o.title);
+    set('meta[property="og:description"]', 'content', o.description);
+    if (o.url) { set('link[rel="canonical"]', 'href', R.SITE + o.url); set('meta[property="og:url"]', 'content', R.SITE + o.url); }
+    var robots = document.querySelector('meta[name="robots"]');
+    if (o.noindex) {
+      if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots); }
+      robots.content = 'noindex';
+    } else if (robots) { robots.remove(); }
   }
-  var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function afterRender(el) {
+    if (window.ProteosForms) window.ProteosForms.init(el);
+    fx(el);
+    if (location.hash) { var t = document.querySelector(location.hash); if (t) setTimeout(function () { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150); }
+  }
 
   var Q_AVVISI = 'web_avvisi?select=slug,titolo,numero&pubblicato=eq.true&order=ordine';
   var Q_CORSI = 'web_corsi?select=slug,titolo,ore,indennita,sede,locandina_url,stato,avviso:web_avvisi(slug,titolo,numero,pubblicato)&pubblicato=eq.true&order=ordine';
@@ -148,79 +130,38 @@
 
   /* ---- pagina avviso ---- */
   function renderAvviso(el) {
+    if (el.dataset.ssr) { afterRender(el); return; }
     var slug = pathSlug('avviso');
     function notFound() {
-      document.title = 'Avviso non trovato - Proteos';
-      el.innerHTML = '<section class="section section-white"><div class="container narrow"><h1 class="page-title">Avviso non trovato</h1><p>L’avviso richiesto non è disponibile. <a href="/corsi/">Vedi i corsi attivi</a>.</p></div></section>';
+      setHead({ title: 'Avviso non trovato - Proteos', noindex: true });
+      el.innerHTML = R.NOT_FOUND.avviso;
     }
     if (!slug) { notFound(); return; }
-    api('web_avvisi?select=*,corsi:web_corsi(*),bandi:web_bandi(id,titolo,data,estratto,allegato_url,pubblicato)&slug=eq.' + encodeURIComponent(slug)).then(function (rows) {
+    api(R.Q.avviso(slug)).then(function (rows) {
       var a = rows[0];
       if (!a || !a.pubblicato) { notFound(); return; }
-      document.title = a.titolo + ' - Proteos';
-      var corsi = (a.corsi || []).filter(function (c) { return c.pubblicato; }).sort(function (x, y) { return x.ordine - y.ordine; });
-      var bandi = (a.bandi || []).filter(function (b) { return b.pubblicato; }).sort(function (x, y) { return x.data < y.data ? 1 : -1; });
-      var titlePre = a.titolo.replace(a.numero, '').trim();
-      var html = '';
-      html += '<section class="avviso-hero' + (a.loghi && a.loghi.trim() ? ' has-loghi' : '') + '"><span class="avviso-orb o1" aria-hidden="true"></span><span class="avviso-orb o2" aria-hidden="true"></span><div class="container">' +
-        '<h1 data-split>' + esc(titlePre) + ' <strong>' + esc(a.numero) + '</strong></h1>' +
-        '<div class="avviso-stato">' + badge(a.stato) + '</div>' +
-        (a.sottotitolo ? '<p class="avviso-sub">' + esc(a.sottotitolo) + '</p>' : '') +
-        paras(a.testo_intro) + '</div></section>';
-      html += '<section class="section section-white avviso-body"><div class="container narrow">' + loghiHtml(a.loghi) +
-        '<div class="text-brand">' + paras(a.testo_corpo) + '</div>' +
-        (a.allegato_url ? '<p class="avviso-allegato"><a class="btn btn-square" href="' + esc(a.allegato_url) + '" target="_blank" rel="noopener">Scarica l’avviso completo (PDF)</a></p>' : '') +
-        (corsi.length ? '<h2 class="h-red">Visualizza la nostra Offerta Formativa</h2><div class="posters">' + corsi.map(function (c) {
-          return '<figure class="poster" id="corso-' + esc(c.slug) + '">' +
-            (c.locandina_url ? '<a class="poster-img" href="' + esc(c.locandina_url) + '" target="_blank" rel="noopener"><img src="' + esc(c.locandina_url) + '" alt="Locandina corso ' + esc(c.titolo) + '" width="800" height="1131" loading="lazy" decoding="async" /></a>' : '') +
-            '<figcaption>' + badge(c.stato) + '<strong>' + esc(c.titolo) + '</strong>' +
-            (c.ore ? '<span>' + esc(c.ore) + '</span>' : '') + (c.indennita ? '<span>' + esc(c.indennita) + '</span>' : '') + (c.sede ? '<span>Sede: ' + esc(c.sede) + '</span>' : '') +
-            (c.descrizione ? '<span class="poster-desc">' + esc(c.descrizione) + '</span>' : '') + '</figcaption></figure>';
-        }).join('') + '</div>' : '') +
-        (bandi.length ? '<h2 class="h-red">Bandi di selezione</h2><div class="posts posts-avviso">' + bandi.map(function (b) { return bandoCard(b, false); }).join('') + '</div>' : '') +
-        '</div></section>';
-      if (a.destinatari) {
-        html += '<section class="section section-light avviso-q"><div class="container narrow"><h3 class="h-q">' + esc(a.destinatari_titolo || 'A chi si rivolge l’Avviso?') + '</h3>' + paras(a.destinatari) + '</div></section>';
-      }
-      html += '<section class="section section-white avviso-end"><div class="container narrow">' +
-        (a.indennita ? '<div class="indennita-box"><h2>Indennità di frequenza</h2><p>' + esc(a.indennita).replace(/(€\s?[\d.,]+(?:\/h)?)/g, '<b>$1</b>') + '</p></div>' : '') +
-        (a.rilascio_titolo ? '<h2 class="h-small-brand">Rilascio del titolo</h2><p>' + esc(a.rilascio_titolo) + '</p>' : '') +
-        '<h2 class="h-red">Per iscriverti al modulo compila il form sottostante</h2><p class="center">Verrai ricontattato dalla nostra segreteria</p>' +
-        '<div class="form-box">' + document.getElementById('cms-form-template').innerHTML + '</div></div></section>';
-      el.innerHTML = html;
-      var subj = corsi.length && el.querySelector('.avviso-end .contact-form [name="oggetto"]');
-      if (subj) subj.insertAdjacentHTML('beforebegin', '<label class="sr-only" for="f-corso">Corso di interesse</label><select class="input" id="f-corso" name="corso">' +
-        '<option value="">Corso di interesse</option>' + corsi.map(function (c) { return '<option>' + esc(c.titolo) + '</option>'; }).join('') + '</select>');
-      if (window.ProteosForms) window.ProteosForms.init(el);
-      fx(el);
-      if (location.hash) { var t = document.querySelector(location.hash); if (t) setTimeout(function () { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150); }
+      var tpl = document.getElementById('cms-form-template');
+      var out = R.avviso(a, tpl ? tpl.innerHTML : '');
+      setHead(out);
+      el.innerHTML = out.html;
+      afterRender(el);
     }).catch(notFound);
   }
 
   /* ---- bandi ---- */
-  function bandoCard(b, conAvviso) {
-    var href = '/bandi-e-avvisi/' + b.id + '/';
-    var av = conAvviso && b.avviso && b.avviso.pubblicato ? '<span class="post-avviso">' + esc(b.avviso.titolo) + '</span>' : '';
-    return '<article class="post"' + (b.avviso_id ? ' data-avviso="' + esc(b.avviso_id) + '"' : '') + '>' + av +
-      '<h2><a href="' + href + '">' + esc(b.titolo) + '</a></h2><p class="post-meta">' + fmtDate(b.data) + '</p>' +
-      (b.estratto ? '<p>' + esc(b.estratto) + '</p>' : '') +
-      '<a class="more" href="' + href + '">leggi tutto</a>' + (b.allegato_url ? ' <a class="more" href="' + esc(b.allegato_url) + '" target="_blank" rel="noopener">PDF</a>' : '') + '</article>';
-  }
   function renderBandi(el) {
     var id = pathSlug('bandi-e-avvisi');
     if (id) {
-      var nf = function () { el.innerHTML = '<h2 class="no-results">Bando non trovato</h2><p><a href="/bandi-e-avvisi/">Torna all’elenco</a></p>'; };
-      if (!UUID.test(id)) { nf(); return; }
-      api('web_bandi?select=*,avviso:web_avvisi(titolo,slug,pubblicato)&id=eq.' + id).then(function (rows) {
+      if (el.dataset.ssr) { afterRender(el); return; }
+      var nf = function () { setHead({ title: 'Bando non trovato - Proteos', noindex: true }); el.innerHTML = R.NOT_FOUND.bando; };
+      if (!R.UUID.test(id)) { nf(); return; }
+      api(R.Q.bando(id)).then(function (rows) {
         var b = rows[0];
         if (!b || !b.pubblicato) { nf(); return; }
-        document.title = b.titolo + ' - Proteos';
-        var av = b.avviso && b.avviso.pubblicato ? ' · <a href="/avviso/' + esc(b.avviso.slug) + '/">' + esc(b.avviso.titolo) + '</a>' : '';
-        el.innerHTML = '<article class="bando-detail"><p class="post-meta">' + fmtDate(b.data) + av + '</p><h2>' + esc(b.titolo) + '</h2>' +
-          paras(b.testo || b.estratto) +
-          (b.allegato_url ? '<p><a class="btn btn-square" href="' + esc(b.allegato_url) + '" target="_blank" rel="noopener">Scarica il bando (PDF)</a></p>' : '') +
-          '<p class="pagination"><a href="/bandi-e-avvisi/">« Tutti i bandi</a></p></article>';
-        fx(el);
+        var out = R.bandoDetail(b);
+        setHead(out);
+        el.innerHTML = out.html;
+        afterRender(el);
       }).catch(nf);
       return;
     }
@@ -233,7 +174,7 @@
       avvisi.sort(function (x, y) { return x.o - y.o; });
       var chips = avvisi.length > 1 ? '<div class="chips" role="group" aria-label="Filtra per avviso"><button type="button" class="chip active" data-f="">Tutti</button>' +
         avvisi.map(function (a) { return '<button type="button" class="chip" data-f="' + esc(a.id) + '">' + esc(a.t) + '</button>'; }).join('') + '</div>' : '';
-      el.innerHTML = chips + '<div class="posts">' + rows.map(function (b) { return bandoCard(b, true); }).join('') + '</div>';
+      el.innerHTML = chips + '<div class="posts">' + rows.map(function (b) { return R.bandoCard(b, true); }).join('') + '</div>';
       el.querySelectorAll('.chip').forEach(function (c) {
         c.addEventListener('click', function () {
           el.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('active', x === c); });
@@ -255,5 +196,5 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  window.ProteosCMS = { api: api, STATI: STATI, badge: badge, esc: esc };
+  window.ProteosCMS = { api: api, STATI: R.STATI, badge: badge, esc: esc };
 })();

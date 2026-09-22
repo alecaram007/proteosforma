@@ -2,9 +2,14 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "rewrites": [
-    { "source": "/avviso/:slug/", "destination": "/avviso/" },
-    { "source": "/bandi-e-avvisi/:id/", "destination": "/bandi-e-avvisi/" }
+    { "source": "/avviso/:slug/", "destination": "/api/ssr?type=avviso&slug=:slug" },
+    { "source": "/bandi-e-avvisi/:id/", "destination": "/api/ssr?type=bando&id=:id" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
   ],
+  "functions": {
+    "api/ssr.js": { "includeFiles": "{render.js,config.js,avviso/index.html,bandi-e-avvisi/index.html}" },
+    "api/sitemap.js": { "includeFiles": "config.js" }
+  },
   "redirects": [
     { "source": "/avviso-1-2026-poc/", "destination": "/avviso/avviso-1-2026-poc/", "permanent": true },
     { "source": "/avviso-6-2025/", "destination": "/avviso/avviso-6-2025/", "permanent": true },

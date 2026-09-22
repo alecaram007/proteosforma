@@ -3,12 +3,15 @@
 from pathlib import Path
 import hashlib
 import html
+import json
 import re
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = ""
 SITE = "https://proteosformazione.it"
 SUPABASE_URL = "https://jqlzuovigrxcbmazyysg.supabase.co"
+# codice di verifica di Google Search Console (metodo "tag HTML"); vuoto se si verifica con il record DNS
+GOOGLE_SITE_VERIFICATION = ""
 
 
 def ver(rel: str) -> str:
@@ -64,6 +67,44 @@ IMG_SM = {k: webp(f"img/photos/{k}.jpg", f"img/photos/{k}-900.webp", 900) for k 
 LOGO = webp("img/logo.png", "img/logo-header.webp", 360, 90)
 LOGO_WHITE = webp("img/logo-white.png", "img/logo-white.webp", 900, 90)
 LOGO_WHITE_SM = webp("img/logo-white.png", "img/logo-white-sm.webp", 400, 90)
+
+
+def og_image() -> str:
+    """Immagine per WhatsApp, Facebook e Google (1200x630): foto dell'hero con velatura blu e logo bianco."""
+    dst = ROOT / "img/og-image.jpg"
+    srcs = [ROOT / "img/photos/hero_home.jpg", ROOT / "img/logo-white.png"]
+    if Image is not None and (not dst.exists() or dst.stat().st_mtime < max(x.stat().st_mtime for x in srcs)):
+        from PIL import ImageDraw, ImageFont
+        W, H = 1200, 630
+        ph = Image.open(srcs[0]).convert("RGB")
+        k = max(W / ph.width, H / ph.height)
+        ph = ph.resize((round(ph.width * k), round(ph.height * k)), Image.LANCZOS)
+        ph = ph.crop(((ph.width - W) // 2, (ph.height - H) // 2, (ph.width - W) // 2 + W, (ph.height - H) // 2 + H))
+        veil = Image.new("RGB", (W, H), (11, 79, 130))
+        grad = Image.linear_gradient("L").resize((W, H)).point(lambda v: 150 + v * 90 // 255)
+        img = Image.composite(veil, ph, grad)
+        logo = Image.open(srcs[1]).convert("RGBA")
+        lw = 620
+        logo = logo.resize((lw, round(logo.height * lw / logo.width)), Image.LANCZOS)
+        img.paste(logo, ((W - lw) // 2, 150), logo)
+        d = ImageDraw.Draw(img)
+        def font(size):
+            for name in ("arial.ttf", "/System/Library/Fonts/Supplemental/Arial.ttf", "/Library/Fonts/Arial.ttf", "DejaVuSans.ttf"):
+                try:
+                    return ImageFont.truetype(name, size)
+                except OSError:
+                    pass
+            return ImageFont.load_default()
+        for i, line in enumerate(["ENTE DI FORMAZIONE PROFESSIONALE", "Favara (AG) · Corsi gratuiti in Sicilia"]):
+            f = font(34 if i == 0 else 30)
+            tw = d.textlength(line, font=f)
+            d.text(((W - tw) / 2, 410 + i * 56), line, font=f, fill=(255, 255, 255))
+        img.save(dst, "JPEG", quality=86, optimize=True, progressive=True)
+        print("og image", dst.name)
+    return f"{BASE}/img/og-image.jpg"
+
+
+OG_IMAGE = og_image()
 
 
 def hero_media(key: str, eager: bool = False) -> str:
@@ -135,8 +176,38 @@ def nav_html(current: str) -> str:
     return "\n          ".join(out)
 
 
-def page(*, path: str, title: str, description: str, body: str, extra_head: str = "") -> str:
-    full_title = f"{BRAND} | Formazione Professionale in Sicilia - Corsi, Certificazioni e Competenze Digitali" if path == "/" else f"{title} - {BRAND}"
+def org_jsonld() -> dict:
+    return {
+        "@type": "EducationalOrganization", "@id": f"{SITE}/#organizzazione",
+        "name": RAGIONE_SOCIALE, "alternateName": BRAND, "url": f"{SITE}/",
+        "logo": f"{SITE}/img/logo.png", "image": f"{SITE}{OG_IMAGE}",
+        "description": "Ente di formazione professionale accreditato dalla Regione Siciliana (CIR AD5015): corsi di qualifica gratuiti, percorsi GOL e tirocini.",
+        "telephone": "+39 " + TEL, "email": EMAIL, "vatID": f"IT{PIVA}", "taxID": PIVA,
+        "address": {"@type": "PostalAddress", "streetAddress": "Via Cesare Sessa, 58", "postalCode": "92026",
+                    "addressLocality": "Favara", "addressRegion": "AG", "addressCountry": "IT"},
+        "geo": {"@type": "GeoCoordinates", "latitude": 37.3191283, "longitude": 13.6662229},
+        "areaServed": [{"@type": "City", "name": c} for c in ("Favara", "Agrigento", "Ragusa", "Alcamo")] + [{"@type": "State", "name": "Sicilia"}],
+    }
+
+
+def page_jsonld(path: str, title: str) -> str:
+    graph = [org_jsonld()]
+    if path == "/":
+        graph.append({"@type": "WebSite", "@id": f"{SITE}/#sito", "url": f"{SITE}/", "name": BRAND, "inLanguage": "it-IT",
+                      "publisher": {"@id": f"{SITE}/#organizzazione"}})
+    elif not path.startswith("/404"):
+        graph.append({"@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE}/"},
+            {"@type": "ListItem", "position": 2, "name": title, "item": SITE + path}]})
+    data = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
+    return f'<script type="application/ld+json">{data}</script>'
+
+
+def page(*, path: str, title: str, description: str, body: str, extra_head: str = "", seo_title: str = "", robots: str = "") -> str:
+    full_title = seo_title or f"{title} - {BRAND}"
+    nl = "\n  "
+    robots_meta = f'{nl}<meta name="robots" content="{robots}" />' if robots else ""
+    verify_meta = f'{nl}<meta name="google-site-verification" content="{GOOGLE_SITE_VERIFICATION}" />' if GOOGLE_SITE_VERIFICATION else ""
     canonical = SITE + path
     return f"""<!doctype html>
 <html lang="it">
@@ -151,7 +222,11 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <meta property="og:title" content="{html.escape(full_title)}" />
   <meta property="og:description" content="{html.escape(description)}" />
   <meta property="og:url" content="{canonical}" />
-  <meta property="og:image" content="{SITE}/img/logo.png" />
+  <meta property="og:image" content="{SITE}{OG_IMAGE}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="it_IT" />
+  <meta name="twitter:card" content="summary_large_image" />{robots_meta}{verify_meta}
   <meta name="theme-color" content="#0a7dbe" />
   <link rel="icon" type="image/png" sizes="32x32" href="{BASE}/img/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="{BASE}/img/favicon-64.png" />
@@ -163,7 +238,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <link rel="stylesheet" href="{asset('style.css')}" />
   {extra_head}
   <script>document.documentElement.classList.add('fx');setTimeout(function(){{if(!window.ProteosFX)document.documentElement.classList.remove('fx')}},2500)</script>
-  <script type="application/ld+json">{{"@context":"https://schema.org","@type":"EducationalOrganization","name":"{RAGIONE_SOCIALE}","alternateName":"{BRAND}","url":"{SITE}/","logo":"{SITE}/img/logo.png","email":"{PEC}","vatID":"IT{PIVA}","taxID":"{PIVA}","address":{{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"}},"areaServed":"Sicilia"}}</script>
+  {page_jsonld(path, title)}
 </head>
 <body>
   <header class="site-header" id="top">
@@ -257,6 +332,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <script src="{asset('site.js')}" defer></script>
   <script src="{asset('fx.js')}" defer></script>
   <script src="{asset('config.js')}" defer></script>
+  <script src="{asset('render.js')}" defer></script>
   <script src="{asset('cms.js')}" defer></script>
 </body>
 </html>
@@ -390,7 +466,7 @@ def build_home():
       <div class="hero-shade"></div>
       <div class="hero-logo">
         <img class="hero-logo-img" src="{LOGO_WHITE}" alt="{BRAND} – {TAGLINE}" width="900" height="334" fetchpriority="high" />
-        <span class="hero-tagline">{TAGLINE}</span>
+        <h1 class="hero-tagline"><span class="sr-only">{BRAND} – </span>{TAGLINE}<span class="sr-only"> a Favara (AG), Sicilia</span></h1>
         <div class="hero-cta">
           <a class="btn btn-glow" href="{BASE}/corsi/" data-magnetic>Scopri i corsi <span class="arr" aria-hidden="true">→</span></a>
           <a class="btn btn-ghost" href="{BASE}/contatti/" data-magnetic>Contattaci</a>
@@ -438,8 +514,8 @@ def build_home():
       <div class="container center home-corsi-more"><a class="btn btn-square" href="{BASE}/corsi/">Tutti i corsi</a></div>
     </section>
 """
-    return page(path="/", title="Home", extra_head=f'<link rel="preload" as="image" href="{IMG_SM["hero_home"]}" imagesrcset="{IMG_SM["hero_home"]} 900w, {IMG["hero_home"]} 1800w" imagesizes="100vw" fetchpriority="high" />',
-                description=f"{BRAND} è il tuo punto di riferimento per una formazione di alta qualità in Sicilia: corsi, certificazioni e corsi finanziati dalla Regione Siciliana.",
+    return page(path="/", title="Home", seo_title=f"{BRAND} – Ente di formazione professionale a Favara (AG) | Corsi gratuiti in Sicilia", extra_head=f'<link rel="preload" as="image" href="{IMG_SM["hero_home"]}" imagesrcset="{IMG_SM["hero_home"]} 900w, {IMG["hero_home"]} 1800w" imagesizes="100vw" fetchpriority="high" />',
+                description="Ente di formazione accreditato dalla Regione Siciliana a Favara (AG): corsi di qualifica gratuiti con indennità di frequenza, percorsi GOL e tirocini in Sicilia.",
                 body=body)
 
 
@@ -490,8 +566,8 @@ def build_chi_siamo():
       </div>
     </section>
 """
-    return page(path="/chi-siamo/", title="Chi siamo",
-                description=f"In {BRAND} crediamo che la formazione sia la chiave per un futuro migliore: corsi innovativi e personalizzati per il mercato del lavoro.",
+    return page(path="/chi-siamo/", title="Chi siamo", seo_title=f"Chi siamo – {BRAND}, ente di formazione accreditato a Favara (AG)",
+                description=f"{RAGIONE_SOCIALE} è un ente di formazione professionale accreditato dalla Regione Siciliana (CIR AD5015) con sede a Favara (AG): la nostra missione e i nostri valori.",
                 body=body)
 
 
@@ -505,7 +581,8 @@ def build_corsi():
       </div>
     </section>
 """
-    return page(path="/corsi/", title="Corsi", description=f"I corsi di formazione professionale gratuiti di {BRAND}: locandine, stato di avvio e avvisi di riferimento.", body=body)
+    return page(path="/corsi/", title="Corsi", seo_title=f"Corsi di formazione gratuiti a Favara (AG) e in Sicilia - {BRAND}",
+                description=f"I corsi di formazione professionale gratuiti di {BRAND} a Favara e in Sicilia: qualifiche finanziate dalla Regione Siciliana, indennità di frequenza, stato delle iscrizioni.", body=body)
 
 
 def build_avviso_template():
@@ -513,7 +590,7 @@ def build_avviso_template():
     <div data-cms="avviso"><section class="section section-white"><div class="container"><p class="cms-loading">Caricamento avviso…</p></div></section></div>
     <template id="cms-form-template">{contact_form(a=9, b=4)}</template>
 """
-    return page(path="/avviso/", title="Avviso", description=f"Avvisi e corsi finanziati di {BRAND}.", body=body)
+    return page(path="/avviso/", title="Avviso", description=f"Avvisi e corsi finanziati di {BRAND}.", body=body, robots="noindex")
 
 
 def build_news():
@@ -528,7 +605,7 @@ def build_news():
       </div>
     </section>
 """
-    return page(path="/news/", title="News", description=f"Le news di {BRAND}.", body=body)
+    return page(path="/news/", title="News", description=f"Le news di {BRAND}.", body=body, robots="noindex")
 
 
 def build_bandi():
@@ -540,8 +617,8 @@ def build_bandi():
       </div>
     </section>
 """
-    return page(path="/bandi-e-avvisi/", title="Bandi e Avvisi",
-                description=f"Bandi e avvisi di selezione per allievi, docenti e personale pubblicati da {BRAND}.", body=body)
+    return page(path="/bandi-e-avvisi/", title="Bandi e Avvisi", seo_title=f"Bandi di selezione per allievi, docenti e personale - {BRAND}",
+                description=f"Bandi di selezione {BRAND} per allievi, docenti e personale non docente dei corsi finanziati dalla Regione Siciliana, con PDF e allegati da scaricare.", body=body)
 
 
 def build_contatti():
@@ -589,8 +666,8 @@ def build_contatti():
       </div>
     </section>
 """
-    return page(path="/contatti/", title="Contatti",
-                description=f"Contatta {RAGIONE_SOCIALE}: PEC, sedi di Favara, Ragusa e Alcamo e accreditamento regionale. Compila il form e verrai ricontattato dalla nostra segreteria.",
+    return page(path="/contatti/", title="Contatti", seo_title=f"Contatti e sedi - {BRAND} Favara (AG)",
+                description=f"Contatta {BRAND} a Favara (AG): telefono {TEL}, email e PEC, sedi di Favara, Ragusa e Alcamo. Compila il modulo e verrai ricontattato dalla segreteria.",
                 body=body)
 
 
@@ -761,8 +838,7 @@ def build_404():
       </div>
     </section>
 """
-    return page(path="/404.html", title="Pagina non trovata", description=f"Pagina non trovata – {BRAND}.", body=body,
-                extra_head='<meta name="robots" content="noindex" />')
+    return page(path="/404.html", title="Pagina non trovata", description=f"Pagina non trovata – {BRAND}.", body=body, robots="noindex")
 
 
 def main():
@@ -776,10 +852,7 @@ def main():
     write("404.html", build_404())
     for slug, content in build_legal().items():
         write(f"{slug}/index.html", content)
-    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso/avviso-1-2026-poc/", "/avviso/avviso-23-2024/", "/avviso/avviso-6-2025/", "/avviso/avviso-7-2023/", "/avviso/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
-    sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
-        f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
-    write("sitemap.xml", sm)
+    # la sitemap è generata al volo da api/sitemap.js (include avvisi e bandi pubblicati dalla dashboard)
     stamp_assets("admin/index.html")
 
 

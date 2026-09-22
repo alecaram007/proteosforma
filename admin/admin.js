@@ -25,6 +25,7 @@
         { k: 'stato', label: 'Stato', type: 'stato', half: true },
         { k: 'ordine', label: 'Ordine nel menu', type: 'number', half: true, def: 0 },
         { k: 'sottotitolo', label: 'Sottotitolo', type: 'text', ph: 'Corsi gratuiti per disoccupati e inoccupati' },
+        { k: 'titolo_seo', label: 'Titolo per Google (facoltativo)', type: 'text', ph: 'Avviso POC 1/2026 – Corsi di qualifica gratuiti a Favara (AG)', help: 'Il titolo che compare nei risultati di Google: breve (massimo 60-65 caratteri), con il tipo di corso e la città. Se vuoto si usa il titolo dell’avviso.' },
         { k: 'testo_intro', label: 'Testo introduttivo (nel riquadro blu)', type: 'textarea', rows: 4 },
         { k: 'testo_corpo', label: 'Descrizione dell’avviso', type: 'textarea', rows: 6, help: 'Lascia una riga vuota per separare i paragrafi.' },
         { k: 'destinatari_titolo', label: 'Titolo sezione destinatari', type: 'text', def: 'A chi si rivolge l’Avviso?' },
