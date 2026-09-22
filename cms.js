@@ -71,7 +71,7 @@
     var list = String(t || '').split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
     if (!list.length) return '';
     return '<div class="avviso-loghi">' + list.map(function (u) {
-      var k = u.split('/').pop().replace(/\.\w+$/, '');
+      var k = u.split('?')[0].split('/').pop().replace(/\.\w+$/, '');
       return '<img src="' + esc(u) + '" alt="' + esc(LOGHI_ALT[k] || 'Logo') + '" loading="lazy" decoding="async" />';
     }).join('') + '</div>';
   }
