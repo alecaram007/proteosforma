@@ -1,4 +1,4 @@
-# proteosforma.it
+# proteosformazione.it
 
 Sito statico di **Proteos – Ente di Formazione Professionale**.
 Nessun build step: le pagine HTML sono già nella radice del repo e si possono hostare su qualunque hosting statico.
@@ -30,7 +30,7 @@ CNAME  robots.txt  sitemap.xml
 
 ## Dashboard (avvisi, corsi, bandi)
 
-Su **https://proteosforma.it/admin/** si pubblicano in autonomia avvisi, corsi con locandina e bandi, senza toccare il codice.
+Su **https://proteosformazione.it/admin/** si pubblicano in autonomia avvisi, corsi con locandina e bandi, senza toccare il codice.
 Il login usa Supabase Auth (progetto Supabase dedicato `proteosforma`, tabelle con prefisso `web_`, bucket `web-media`); possono accedere solo le email presenti nella tabella `web_admins`.
 
 - **Avvisi**: titolo, numero, testi, destinatari, indennità, PDF, stato e pubblicazione. Ogni avviso ha la pagina `/avviso/<slug>/`.
@@ -55,26 +55,24 @@ Va rilanciato anche dopo ogni modifica a `style.css`, `site.js`, `cms.js`, `conf
 I dati da personalizzare sono le costanti in cima al file: `PIVA`, `SEDE_LEGALE`, `SEDE_OPERATIVA`, `TEL`, `EMAIL`, `INDIRIZZO` (e `EMAIL` in `site.js` per il form).
 Le foto sono in `img/photos/` (nomi in `PHOTOS` dentro `build.py`): per usare foto proprie basta sostituire i file `.jpg` mantenendo lo stesso nome e rilanciare `build.py`, che rigenera le versioni `.webp` usate dal sito (serve Pillow: `pip install pillow`; senza, il sito usa le `.jpg`).
 
-## Hosting (GitHub Pages, già attivo)
+## Hosting (Vercel)
 
-Il sito è pubblicato con **GitHub Pages** dal branch `main` (cartella `/`), con dominio personalizzato `proteosforma.it` (file `CNAME`).
-Ogni push su `main` ridistribuisce il sito in 1-2 minuti.
+Il sito è pubblicato su **Vercel** dal branch `main`: ogni push lo ridistribuisce in pochi secondi.
+Indirizzi: https://proteosforma.vercel.app e il dominio **https://proteosformazione.it** (il `www` rimanda al dominio principale).
+`vercel.json` gestisce i rewrite delle pagine dinamiche, i redirect dai vecchi indirizzi e gli header.
 
-### DNS da impostare sul registrar del dominio
+### DNS del dominio (Aruba)
 
 | Tipo  | Nome | Valore |
 |-------|------|--------|
-| A     | @    | 185.199.108.153 |
-| A     | @    | 185.199.109.153 |
-| A     | @    | 185.199.110.153 |
-| A     | @    | 185.199.111.153 |
-| AAAA  | @    | 2606:50c0:8000::153 |
-| AAAA  | @    | 2606:50c0:8001::153 |
-| AAAA  | @    | 2606:50c0:8002::153 |
-| AAAA  | @    | 2606:50c0:8003::153 |
-| CNAME | www  | alecaram007.github.io |
+| A     | @    | 216.198.79.1 |
+| CNAME | www  | cname.vercel-dns.com |
 
-Quando i record sono propagati, in *Settings → Pages* del repo compare "DNS check successful": attiva **Enforce HTTPS** (il certificato viene emesso automaticamente da GitHub).
+Su `@` non deve esserci nessun record **AAAA**: quello del vecchio hosting Aruba impedisce la verifica di Vercel.
+I record della posta (MX, `mail`, `webmail`, SPF) restano quelli di Aruba e non vanno toccati.
+Il certificato HTTPS lo emette Vercel in automatico quando i record sono propagati.
+
+Il repo è ancora collegato anche a GitHub Pages (file `CNAME` con il vecchio dominio proteosforma.it): non serve più e si può disattivare da *Settings → Pages*.
 
 ## Anteprima locale
 

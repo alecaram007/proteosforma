@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-Sitemap: https://proteosforma.it/sitemap.xml
+Sitemap: https://proteosformazione.it/sitemap.xml

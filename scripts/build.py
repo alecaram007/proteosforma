@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Genera le pagine statiche del sito Proteos (proteosforma.it) nella radice del repo."""
+"""Genera le pagine statiche del sito Proteos (proteosformazione.it) nella radice del repo."""
 from pathlib import Path
 import hashlib
 import html
@@ -7,7 +7,7 @@ import re
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = ""
-SITE = "https://proteosforma.it"
+SITE = "https://proteosformazione.it"
 SUPABASE_URL = "https://jqlzuovigrxcbmazyysg.supabase.co"
 
 
@@ -603,7 +603,7 @@ def legal_page(slug, title, body_html):
       </div>
     </section>
 """
-    return page(path=f"/{slug}/", title=title, description=f"{title} di {RAGIONE_SOCIALE} – proteosforma.it", body=body)
+    return page(path=f"/{slug}/", title=title, description=f"{title} di {RAGIONE_SOCIALE} – proteosformazione.it", body=body)
 
 
 def build_legal():
