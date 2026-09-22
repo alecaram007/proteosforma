@@ -35,7 +35,7 @@ Il login usa Supabase Auth (progetto Supabase dedicato `proteosforma`, tabelle c
 - **Avvisi**: titolo, numero, testi, destinatari, indennità, PDF, stato e pubblicazione. Ogni avviso ha la pagina `/avviso/<slug>/`.
 - **Corsi**: collegati a un avviso, con locandina caricata dalla dashboard, durata, indennità, sede e stato. Compaiono in `/corsi/` e dentro l'avviso.
 - **Bandi**: titolo, data, estratto, testo completo e PDF. Compaiono in `/bandi-e-avvisi/`.
-- **Stati** (badge sul sito): In programmazione · In fase di avvio · Corso avviato: in cerca di allievi · In svolgimento · Corso concluso. Si cambiano al volo dalla lista.
+- **Stati** (badge sul sito): In programmazione · In fase di avvio · Corso avviato: in cerca di allievi · In svolgimento · In conclusione · Corso concluso. Si cambiano al volo dalla lista.
 - L'interruttore verde pubblica o nasconde l'elemento; le bozze restano visibili solo in dashboard.
 
 Per aggiungere un amministratore: creare l'utente in Supabase → Authentication e inserire la sua email in `web_admins`.

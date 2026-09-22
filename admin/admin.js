@@ -9,6 +9,7 @@
     ['in_fase_di_avvio', 'In fase di avvio', 'st-start'],
     ['in_cerca_di_allievi', 'Corso avviato: in cerca di allievi', 'st-open'],
     ['in_svolgimento', 'In svolgimento', 'st-run'],
+    ['in_conclusione', 'In conclusione', 'st-closing'],
     ['concluso', 'Corso concluso', 'st-done']
   ];
   var STATO = {}; STATI.forEach(function (s) { STATO[s[0]] = { label: s[1], cls: s[2] }; });

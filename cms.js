@@ -10,6 +10,7 @@
     in_fase_di_avvio:    { label: 'In fase di avvio',                  cls: 'st-start' },
     in_cerca_di_allievi: { label: 'Corso avviato: iscrizioni aperte',  cls: 'st-open' },
     in_svolgimento:      { label: 'In svolgimento',                    cls: 'st-run' },
+    in_conclusione:      { label: 'In conclusione',                    cls: 'st-closing' },
     concluso:            { label: 'Corso concluso',                    cls: 'st-done' }
   };
   var MESI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];

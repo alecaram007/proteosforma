@@ -465,6 +465,7 @@ main { padding-top: var(--header-h); }
 .st-start { background: #fff2cc; color: #8a5a00; }
 .st-open { background: #d7f5e3; color: #0f6b3a; }
 .st-run { background: #dcefff; color: #0a5290; }
+.st-closing { background: #ffe3d3; color: #9a3a0b; }
 .st-done { background: #f1e3f7; color: #6b2d82; }
 .avviso-stato { margin: -10px 0 18px; }
 .avviso-stato .stato { font-size: 12px; padding: 6px 14px; }
