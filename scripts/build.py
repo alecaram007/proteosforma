@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 """Genera le pagine statiche del sito Proteos (proteosforma.it) nella radice del repo."""
 from pathlib import Path
+import hashlib
 import html
+import re
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = ""
 SITE = "https://proteosforma.it"
+
+
+def ver(rel: str) -> str:
+    """Hash del contenuto: cambia a ogni modifica e obbliga i browser a riscaricare il file (JS/CSS in cache 7 giorni)."""
+    return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
+
+
+def asset(rel: str) -> str:
+    return f"{BASE}/{rel}?v={ver(rel)}"
 
 BRAND = "Proteos"
 RAGIONE_SOCIALE = "Proteos S.r.l. Impresa Sociale"
@@ -109,7 +120,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/open-sans-400-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/roboto-500-latin.woff2" crossorigin />
   <link rel="stylesheet" href="{BASE}/fonts/fonts.css" />
-  <link rel="stylesheet" href="{BASE}/style.css" />
+  <link rel="stylesheet" href="{asset('style.css')}" />
   {extra_head}
   <script type="application/ld+json">{{"@context":"https://schema.org","@type":"EducationalOrganization","name":"{RAGIONE_SOCIALE}","alternateName":"{BRAND}","url":"{SITE}/","logo":"{SITE}/img/logo.png","email":"{PEC}","vatID":"IT{PIVA}","taxID":"{PIVA}","address":{{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"}},"areaServed":"Sicilia"}}</script>
 </head>
@@ -202,10 +213,10 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
     <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10c0-.7-.1-1.3-.2-2a3 3 0 0 1-3.3-3.3A3 3 0 0 1 15.2 3a10 10 0 0 0-3.2-1zm-3 6a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm6 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm-5 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg>
   </button>
 
-  <script src="{BASE}/site.js" defer></script>
-  <script src="{BASE}/config.js" defer></script>
+  <script src="{asset('site.js')}" defer></script>
+  <script src="{asset('config.js')}" defer></script>
   <script src="{BASE}/vendor/supabase/supabase.js" defer></script>
-  <script src="{BASE}/cms.js" defer></script>
+  <script src="{asset('cms.js')}" defer></script>
 </body>
 </html>
 """
@@ -649,6 +660,15 @@ def write(rel: str, content: str):
     print("wrote", p.relative_to(ROOT))
 
 
+def stamp_assets(rel: str):
+    """Aggiorna ?v= di CSS/JS nelle pagine scritte a mano (404, dashboard)."""
+    p = ROOT / rel
+    s = re.sub(r'((?:href|src)="/((?:admin/)?(?:style|site|config|cms|admin)\.(?:css|js)))(?:\?v=\w+)?"',
+               lambda m: f'{m.group(1)}?v={ver(m.group(2))}"', p.read_text(encoding="utf-8"))
+    p.write_text(s, encoding="utf-8")
+    print("stamped", rel)
+
+
 def main():
     write("index.html", build_home())
     write("chi-siamo/index.html", build_chi_siamo())
@@ -663,6 +683,8 @@ def main():
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)
+    stamp_assets("404.html")
+    stamp_assets("admin/index.html")
 
 
 if __name__ == "__main__":

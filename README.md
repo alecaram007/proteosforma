@@ -49,6 +49,8 @@ Testi, dati aziendali e menu sono in `scripts/build.py`. Dopo una modifica rigen
 python3 scripts/build.py
 ```
 
+Va rilanciato anche dopo ogni modifica a `style.css`, `site.js`, `cms.js`, `config.js` o ai file di `admin/`: aggiorna il parametro `?v=` nei link, così i browser non usano la versione vecchia in cache.
+
 I dati da personalizzare sono le costanti in cima al file: `PIVA`, `SEDE_LEGALE`, `SEDE_OPERATIVA`, `TEL`, `EMAIL`, `INDIRIZZO` (e `EMAIL` in `site.js` per il form).
 Le foto sono in `img/photos/` (nomi in `IMG` dentro `build.py`): per usare foto proprie basta sostituire i file mantenendo lo stesso nome.
 
