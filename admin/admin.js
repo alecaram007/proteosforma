@@ -32,6 +32,7 @@
         { k: 'indennita', label: 'Indennità di frequenza', type: 'textarea', rows: 2, ph: '… è riconosciuta un’indennità di frequenza giornaliera pari a € 5,00' },
         { k: 'rilascio_titolo', label: 'Rilascio del titolo', type: 'textarea', rows: 3 },
         { k: 'allegato_url', label: 'Avviso completo (PDF)', type: 'file', accept: 'application/pdf', folder: 'avvisi' },
+        { k: 'loghi', label: 'Loghi del finanziamento', type: 'textarea', rows: 5, help: 'Un’immagine per riga, nell’ordine in cui compaiono. Disponibili: /img/loghi/coesione-italia-21-27-sicilia.png · /img/loghi/cofinanziato-ue.png · /img/loghi/repubblica-italiana.png · /img/loghi/regione-siciliana.png · /img/loghi/poc-sicilia-14-20.png' },
         { k: 'pubblicato', label: 'Pubblicato sul sito', type: 'check' }
       ]
     },

@@ -833,3 +833,19 @@ main { overflow-x: clip; }
   .hero-contatti .hero-media img { mix-blend-mode: normal; }
   .hero-contatti .hero-media::after { content: ""; position: absolute; inset: 0; background: rgba(10, 125, 190, .72); }
 }
+
+/* ---------- Loghi istituzionali nella pagina avviso ---------- */
+.avviso-loghi {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px 44px;
+  margin: -84px auto 44px; padding: 22px 34px; position: relative; z-index: 2;
+  background: #fff; border-radius: 16px; box-shadow: 0 18px 44px rgba(11, 79, 130, .14);
+}
+.avviso-loghi img { height: 54px; width: auto; max-width: 100%; object-fit: contain; }
+.avviso-body { padding-top: 0; }
+.avviso-body .container > .text-brand:first-child { padding-top: 50px; }
+.avviso-hero.has-loghi { padding-bottom: 110px; }
+@media (max-width: 767px) {
+  .avviso-loghi { gap: 16px 26px; padding: 16px 18px; margin-top: -60px; }
+  .avviso-loghi img { height: 40px; }
+  .avviso-hero.has-loghi { padding-bottom: 86px; }
+}

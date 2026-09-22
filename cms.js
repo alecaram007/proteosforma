@@ -59,6 +59,22 @@
     var q = new URLSearchParams(location.search);
     return q.get('s') || q.get('id') || '';
   }
+  /* loghi istituzionali: testo alternativo dal nome del file */
+  var LOGHI_ALT = {
+    'coesione-italia-21-27-sicilia': 'Coesione Italia 21-27 Sicilia',
+    'cofinanziato-ue': 'Cofinanziato dall’Unione europea',
+    'repubblica-italiana': 'Repubblica Italiana',
+    'regione-siciliana': 'Regione Siciliana',
+    'poc-sicilia-14-20': 'POC Sicilia 14-20'
+  };
+  function loghiHtml(t) {
+    var list = String(t || '').split(/\n+/).map(function (s) { return s.trim(); }).filter(Boolean);
+    if (!list.length) return '';
+    return '<div class="avviso-loghi">' + list.map(function (u) {
+      var k = u.split('/').pop().replace(/\.\w+$/, '');
+      return '<img src="' + esc(u) + '" alt="' + esc(LOGHI_ALT[k] || 'Logo') + '" loading="lazy" decoding="async" />';
+    }).join('') + '</div>';
+  }
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   var Q_AVVISI = 'web_avvisi?select=slug,titolo,numero&pubblicato=eq.true&order=ordine';
@@ -146,12 +162,12 @@
       var bandi = (a.bandi || []).filter(function (b) { return b.pubblicato; }).sort(function (x, y) { return x.data < y.data ? 1 : -1; });
       var titlePre = a.titolo.replace(a.numero, '').trim();
       var html = '';
-      html += '<section class="avviso-hero"><span class="avviso-orb o1" aria-hidden="true"></span><span class="avviso-orb o2" aria-hidden="true"></span><div class="container">' +
+      html += '<section class="avviso-hero' + (a.loghi && a.loghi.trim() ? ' has-loghi' : '') + '"><span class="avviso-orb o1" aria-hidden="true"></span><span class="avviso-orb o2" aria-hidden="true"></span><div class="container">' +
         '<h1 data-split>' + esc(titlePre) + ' <strong>' + esc(a.numero) + '</strong></h1>' +
         '<div class="avviso-stato">' + badge(a.stato) + '</div>' +
         (a.sottotitolo ? '<p class="avviso-sub">' + esc(a.sottotitolo) + '</p>' : '') +
         paras(a.testo_intro) + '</div></section>';
-      html += '<section class="section section-white avviso-body"><div class="container narrow">' +
+      html += '<section class="section section-white avviso-body"><div class="container narrow">' + loghiHtml(a.loghi) +
         '<div class="text-brand">' + paras(a.testo_corpo) + '</div>' +
         (a.allegato_url ? '<p class="avviso-allegato"><a class="btn btn-square" href="' + esc(a.allegato_url) + '" target="_blank" rel="noopener">Scarica l’avviso completo (PDF)</a></p>' : '') +
         (corsi.length ? '<h2 class="h-red">Visualizza la nostra Offerta Formativa</h2><div class="posters">' + corsi.map(function (c) {
