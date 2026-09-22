@@ -9,7 +9,9 @@
     { "source": "/avviso-1-2026-poc/", "destination": "/avviso/avviso-1-2026-poc/", "permanent": true },
     { "source": "/avviso-6-2025/", "destination": "/avviso/avviso-6-2025/", "permanent": true },
     { "source": "/avviso-7-2023/", "destination": "/avviso/avviso-7-2023/", "permanent": true },
-    { "source": "/avviso-20-2024/", "destination": "/avviso/avviso-20-2024/", "permanent": true }
+    { "source": "/avviso-20-2024/", "destination": "/avviso/avviso-20-2024/", "permanent": true },
+    { "source": "/bando-pubblico-di-selezione-docenti/", "destination": "/bandi-e-avvisi/562133e8-3e70-4267-a5ce-6390990f0976/", "permanent": true },
+    { "source": "/bando-pubblico-di-selezione-personale-non-docente-2/", "destination": "/bandi-e-avvisi/32ce9514-b091-429c-8420-0b652829cfab/", "permanent": true }
   ],
   "headers": [
     { "source": "/admin/(.*)", "headers": [ { "key": "X-Robots-Tag", "value": "noindex, nofollow" } ] },

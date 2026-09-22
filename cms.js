@@ -138,11 +138,12 @@
       el.innerHTML = '<section class="section section-white"><div class="container narrow"><h1 class="page-title">Avviso non trovato</h1><p>L’avviso richiesto non è disponibile. <a href="/corsi/">Vedi i corsi attivi</a>.</p></div></section>';
     }
     if (!slug) { notFound(); return; }
-    api('web_avvisi?select=*,corsi:web_corsi(*)&slug=eq.' + encodeURIComponent(slug)).then(function (rows) {
+    api('web_avvisi?select=*,corsi:web_corsi(*),bandi:web_bandi(id,titolo,data,estratto,allegato_url,pubblicato)&slug=eq.' + encodeURIComponent(slug)).then(function (rows) {
       var a = rows[0];
       if (!a || !a.pubblicato) { notFound(); return; }
       document.title = a.titolo + ' - Proteos';
       var corsi = (a.corsi || []).filter(function (c) { return c.pubblicato; }).sort(function (x, y) { return x.ordine - y.ordine; });
+      var bandi = (a.bandi || []).filter(function (b) { return b.pubblicato; }).sort(function (x, y) { return x.data < y.data ? 1 : -1; });
       var titlePre = a.titolo.replace(a.numero, '').trim();
       var html = '';
       html += '<section class="avviso-hero"><span class="avviso-orb o1" aria-hidden="true"></span><span class="avviso-orb o2" aria-hidden="true"></span><div class="container">' +
@@ -159,7 +160,9 @@
             '<figcaption>' + badge(c.stato) + '<strong>' + esc(c.titolo) + '</strong>' +
             (c.ore ? '<span>' + esc(c.ore) + '</span>' : '') + (c.indennita ? '<span>' + esc(c.indennita) + '</span>' : '') + (c.sede ? '<span>Sede: ' + esc(c.sede) + '</span>' : '') +
             (c.descrizione ? '<span class="poster-desc">' + esc(c.descrizione) + '</span>' : '') + '</figcaption></figure>';
-        }).join('') + '</div>' : '') + '</div></section>';
+        }).join('') + '</div>' : '') +
+        (bandi.length ? '<h2 class="h-red">Bandi di selezione</h2><div class="posts posts-avviso">' + bandi.map(function (b) { return bandoCard(b, false); }).join('') + '</div>' : '') +
+        '</div></section>';
       if (a.destinatari) {
         html += '<section class="section section-light avviso-q"><div class="container narrow"><h3 class="h-q">' + esc(a.destinatari_titolo || 'A chi si rivolge l’Avviso?') + '</h3>' + paras(a.destinatari) + '</div></section>';
       }
@@ -176,16 +179,25 @@
   }
 
   /* ---- bandi ---- */
+  function bandoCard(b, conAvviso) {
+    var href = '/bandi-e-avvisi/' + b.id + '/';
+    var av = conAvviso && b.avviso && b.avviso.pubblicato ? '<span class="post-avviso">' + esc(b.avviso.titolo) + '</span>' : '';
+    return '<article class="post"' + (b.avviso_id ? ' data-avviso="' + esc(b.avviso_id) + '"' : '') + '>' + av +
+      '<h2><a href="' + href + '">' + esc(b.titolo) + '</a></h2><p class="post-meta">' + fmtDate(b.data) + '</p>' +
+      (b.estratto ? '<p>' + esc(b.estratto) + '</p>' : '') +
+      '<a class="more" href="' + href + '">leggi tutto</a>' + (b.allegato_url ? ' <a class="more" href="' + esc(b.allegato_url) + '" target="_blank" rel="noopener">PDF</a>' : '') + '</article>';
+  }
   function renderBandi(el) {
     var id = pathSlug('bandi-e-avvisi');
     if (id) {
       var nf = function () { el.innerHTML = '<h2 class="no-results">Bando non trovato</h2><p><a href="/bandi-e-avvisi/">Torna all’elenco</a></p>'; };
       if (!UUID.test(id)) { nf(); return; }
-      api('web_bandi?select=*&id=eq.' + id).then(function (rows) {
+      api('web_bandi?select=*,avviso:web_avvisi(titolo,slug,pubblicato)&id=eq.' + id).then(function (rows) {
         var b = rows[0];
         if (!b || !b.pubblicato) { nf(); return; }
         document.title = b.titolo + ' - Proteos';
-        el.innerHTML = '<article class="bando-detail"><p class="post-meta">' + fmtDate(b.data) + '</p><h2>' + esc(b.titolo) + '</h2>' +
+        var av = b.avviso && b.avviso.pubblicato ? ' · <a href="/avviso/' + esc(b.avviso.slug) + '/">' + esc(b.avviso.titolo) + '</a>' : '';
+        el.innerHTML = '<article class="bando-detail"><p class="post-meta">' + fmtDate(b.data) + av + '</p><h2>' + esc(b.titolo) + '</h2>' +
           paras(b.testo || b.estratto) +
           (b.allegato_url ? '<p><a class="btn btn-square" href="' + esc(b.allegato_url) + '" target="_blank" rel="noopener">Scarica il bando (PDF)</a></p>' : '') +
           '<p class="pagination"><a href="/bandi-e-avvisi/">« Tutti i bandi</a></p></article>';
@@ -194,14 +206,22 @@
       return;
     }
     el.innerHTML = '<p class="cms-loading">Caricamento…</p>';
-    api('web_bandi?select=id,titolo,data,estratto,allegato_url&pubblicato=eq.true&order=data.desc').then(function (rows) {
+    api('web_bandi?select=id,titolo,data,estratto,allegato_url,avviso_id,avviso:web_avvisi(titolo,slug,pubblicato,ordine)&pubblicato=eq.true&order=data.desc').then(function (rows) {
       if (!rows.length) { el.innerHTML = '<h2 class="no-results">Nessun bando pubblicato</h2><p>Al momento non ci sono bandi o avvisi di selezione attivi.</p>'; return; }
-      el.innerHTML = '<div class="posts">' + rows.map(function (b) {
-        var href = '/bandi-e-avvisi/' + b.id + '/';
-        return '<article class="post"><h2><a href="' + href + '">' + esc(b.titolo) + '</a></h2><p class="post-meta">' + fmtDate(b.data) + '</p>' +
-          (b.estratto ? '<p>' + esc(b.estratto) + '</p>' : '') +
-          '<a class="more" href="' + href + '">leggi tutto</a>' + (b.allegato_url ? ' <a class="more" href="' + esc(b.allegato_url) + '" target="_blank" rel="noopener">PDF</a>' : '') + '</article>';
-      }).join('') + '</div>';
+      // filtri per avviso (solo se i bandi appartengono a più avvisi)
+      var avvisi = [], seen = {};
+      rows.forEach(function (b) { if (b.avviso && b.avviso.pubblicato && !seen[b.avviso_id]) { seen[b.avviso_id] = 1; avvisi.push({ id: b.avviso_id, t: b.avviso.titolo, o: b.avviso.ordine }); } });
+      avvisi.sort(function (x, y) { return x.o - y.o; });
+      var chips = avvisi.length > 1 ? '<div class="chips" role="group" aria-label="Filtra per avviso"><button type="button" class="chip active" data-f="">Tutti</button>' +
+        avvisi.map(function (a) { return '<button type="button" class="chip" data-f="' + esc(a.id) + '">' + esc(a.t) + '</button>'; }).join('') + '</div>' : '';
+      el.innerHTML = chips + '<div class="posts">' + rows.map(function (b) { return bandoCard(b, true); }).join('') + '</div>';
+      el.querySelectorAll('.chip').forEach(function (c) {
+        c.addEventListener('click', function () {
+          el.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('active', x === c); });
+          var f = c.getAttribute('data-f');
+          el.querySelectorAll('.post').forEach(function (p) { p.hidden = !!f && p.getAttribute('data-avviso') !== f; });
+        });
+      });
       fx(el);
     }).catch(function () { el.innerHTML = '<p class="cms-error">Impossibile caricare i bandi in questo momento.</p>'; });
   }

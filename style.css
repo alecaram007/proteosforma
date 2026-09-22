@@ -809,3 +809,17 @@ main { overflow-x: clip; }
   .fx [data-reveal], .fx .split .wi { opacity: 1 !important; translate: none !important; scale: none !important; clip-path: none !important; }
   .hero-media img, .ribbon-track, .hero-wave svg { animation: none !important; }
 }
+
+/* ---------- Bandi: filtro per avviso e avviso di riferimento ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 26px; }
+.chip {
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--navy); cursor: pointer;
+  padding: 8px 16px; border-radius: 100px; border: 1px solid #cfe0ea; background: #fff;
+  transition: background .3s, color .3s, border-color .3s, transform .3s var(--ease-out);
+}
+.chip:hover { border-color: var(--brand); transform: translateY(-2px); }
+.chip.active { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+.post[hidden] { display: none; }
+.post-avviso { display: inline-block; margin-bottom: 10px; padding: 3px 10px; border-radius: 100px; background: var(--light); color: var(--brand-dark); font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.posts-avviso { grid-template-columns: repeat(2, 1fr); margin-bottom: 10px; }
+@media (max-width: 767px) { .posts-avviso { grid-template-columns: 1fr; } }

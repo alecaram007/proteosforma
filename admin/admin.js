@@ -58,6 +58,7 @@
       fields: [
         { k: 'titolo', label: 'Titolo', type: 'text', req: true, ph: 'Bando pubblico di selezione allievi' },
         { k: 'data', label: 'Data', type: 'date', req: true, half: true, def: 'today' },
+        { k: 'avviso_id', label: 'Avviso di riferimento', type: 'avviso', half: true },
         { k: 'estratto', label: 'Estratto (anteprima nell’elenco)', type: 'textarea', rows: 2 },
         { k: 'testo', label: 'Testo completo', type: 'textarea', rows: 8, help: 'Lascia una riga vuota per separare i paragrafi.' },
         { k: 'allegato_url', label: 'Bando (PDF)', type: 'file', accept: 'application/pdf', folder: 'bandi' },
