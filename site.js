@@ -55,8 +55,19 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setSearch(false); });
   }
 
-  /* ----- contact forms: validazione + captcha aritmetico + mailto ----- */
+  /* ----- moduli di contatto / iscrizione: validazione, captcha aritmetico e salvataggio nel database
+     del sito (dashboard → Richieste); se l'invio non riesce resta la possibilità di scrivere via email ----- */
   var EMAIL = 'proteos1@libero.it';
+  function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function avvisoSlug() {
+    var m = location.pathname.match(/^\/avviso\/([^/]+)\/?$/);
+    return m ? decodeURIComponent(m[1]) : (new URLSearchParams(location.search).get('s') || null);
+  }
+  function mailtoHref(rec) {
+    var subject = (rec.oggetto || 'Richiesta informazioni') + ' – ' + rec.pagina;
+    var body = ['Nome e Cognome: ' + rec.nome, 'Telefono: ' + rec.telefono, 'Email: ' + rec.email].concat(rec.corso ? ['Corso: ' + rec.corso] : []).concat(['', rec.messaggio || '']).join('\n');
+    return 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
   function initForms(scope) {
     (scope || document).querySelectorAll('.contact-form').forEach(function (form) {
       if (form.dataset.ready) return;
@@ -82,12 +93,27 @@
           return;
         }
         var f = form.elements;
-        var subject = (f.oggetto.value.trim() || 'Richiesta informazioni') + ' – ' + document.title.split(' - ')[0];
-        var body = ['Nome e Cognome: ' + f.nome.value.trim(), 'Telefono: ' + f.telefono.value.trim(), 'Email: ' + f.email.value.trim(), '', f.messaggio.value.trim()].join('\n');
-        window.location.href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-        status.className = 'form-status';
-        status.textContent = 'Grazie! Si aprirà il tuo client di posta per inviare il messaggio.';
-        form.reset();
+        var thanks = 'Grazie! La tua richiesta è stata inviata: la segreteria ti ricontatterà al più presto.';
+        if (f.sito && f.sito.value) { status.className = 'form-status ok'; status.textContent = thanks; form.reset(); return; }  // trappola anti-bot
+        var val = function (n) { return f[n] && f[n].value.trim() ? f[n].value.trim() : null; };
+        var rec = {
+          nome: val('nome'), telefono: val('telefono'), email: val('email'), oggetto: val('oggetto'), messaggio: val('messaggio'),
+          corso: val('corso'), pagina: document.title.split(' - ')[0].slice(0, 300), avviso_slug: avvisoSlug(), privacy: true
+        };
+        var cfg = window.PROTEOS_CONFIG || {};
+        var btn = form.querySelector('[type="submit"]'), label = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Invio…';
+        status.className = 'form-status'; status.textContent = '';
+        fetch(cfg.supabaseUrl + '/rest/v1/web_richieste?apikey=' + encodeURIComponent(cfg.supabaseKey), {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify(rec)
+        }).then(function (r) {
+          if (r.ok) { status.className = 'form-status ok'; status.textContent = thanks; form.reset(); return; }
+          return r.json().catch(function () { return {}; }).then(function (e) { throw new Error(e && /Troppe/.test(e.message || '') ? e.message : 'invio'); });
+        }).catch(function (err) {
+          status.className = 'form-status error';
+          status.innerHTML = (/Troppe/.test(err.message) ? escHtml(err.message) + '.' : 'Non è stato possibile inviare la richiesta.') +
+            ' Puoi scriverci a <a href="' + mailtoHref(rec) + '">' + EMAIL + '</a>.';
+        }).then(function () { btn.disabled = false; btn.textContent = label; });
       });
     });
   }

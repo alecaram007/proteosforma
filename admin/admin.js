@@ -68,7 +68,14 @@
     }
   };
 
-  var state = { tab: 'avvisi', rows: [], avvisi: [], editing: null, user: null };
+  TABLES.richieste = {
+    table: 'web_richieste', title: 'Richieste', special: true,
+    hint: 'Le richieste di informazioni e di iscrizione inviate dai moduli del sito, dalla più recente. Aggiorna lo stato man mano che le gestisci.'
+  };
+  var RQ_STATI = [['nuova', 'Nuova', 'rq-new'], ['contattato', 'Contattato', 'rq-contact'], ['iscritto', 'Iscritto', 'rq-enrolled'], ['archiviata', 'Archiviata', 'rq-archived']];
+  var RQ = {}; RQ_STATI.forEach(function (s) { RQ[s[0]] = { label: s[1], cls: s[2] }; });
+
+  var state = { tab: 'avvisi', rows: [], avvisi: [], editing: null, user: null, rqFilter: '', rqSearch: '' };
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -90,7 +97,8 @@
       $('#login-msg').textContent = 'Questo account non è abilitato alla dashboard.'; return;
     }
     state.user = user; $('#user-email').textContent = user.email; show('app');
-    await loadAvvisi(); await loadTab();
+    await loadAvvisi(); await loadTab(); refreshBadge();
+    setInterval(refreshBadge, 120000);
   }
   $('#login-form').addEventListener('submit', async function (e) {
     e.preventDefault(); var f = e.target; $('#login-msg').textContent = '';
@@ -116,6 +124,8 @@
   }
   async function loadTab() {
     var t = TABLES[state.tab];
+    $('#btn-new').hidden = !!t.special; $('#btn-preview').hidden = !!t.special;
+    if (t.special) return loadRichieste();
     $('#panel-title').textContent = t.title; $('#panel-hint').textContent = t.hint;
     $('#btn-preview').href = state.tab === 'bandi' ? '/bandi-e-avvisi/' : '/corsi/';
     $('#legend').innerHTML = state.tab === 'bandi' ? '' : STATI.map(function (s) { return '<span class="stato ' + s[2] + '">' + s[1] + '</span>'; }).join('');
@@ -154,6 +164,98 @@
     var row = state.rows.find(function (x) { return x.id === id; }); Object.assign(row, patch); renderList();
     toast(patch.pubblicato === undefined ? 'Stato aggiornato' : (patch.pubblicato ? 'Pubblicato sul sito' : 'Nascosto dal sito'));
   });
+  /* ---------- richieste dai moduli del sito ---------- */
+  async function refreshBadge() {
+    var r = await sb.from('web_richieste').select('id', { count: 'exact', head: true }).eq('stato', 'nuova');
+    var n = r.count || 0, b = $('#badge-richieste');
+    b.hidden = !n; b.textContent = n;
+    document.title = (n ? '(' + n + ') ' : '') + 'Dashboard - Proteos';
+  }
+  function fmtDateTime(ts) {
+    var d = new Date(ts);
+    return d.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  }
+  async function loadRichieste() {
+    var t = TABLES.richieste;
+    $('#panel-title').textContent = t.title; $('#panel-hint').textContent = t.hint;
+    $('#legend').innerHTML = '<div class="rq-bar"><div class="rq-chips">' +
+      [['', 'Tutte']].concat(RQ_STATI).map(function (s) { return '<button type="button" class="chip' + (state.rqFilter === s[0] ? ' active' : '') + '" data-f="' + s[0] + '">' + s[1] + ' <span class="chip-n" data-n="' + s[0] + '"></span></button>'; }).join('') +
+      '</div><input type="search" class="rq-search" placeholder="Cerca nome, telefono, email, corso…" value="' + esc(state.rqSearch) + '" />' +
+      '<button type="button" class="btn btn-ghost btn-sm" id="rq-refresh">Aggiorna</button><button type="button" class="btn btn-ghost btn-sm" id="rq-csv">Esporta CSV</button></div>';
+    $('#list').innerHTML = '<p class="muted">Caricamento…</p>';
+    var r = await sb.from('web_richieste').select('*').order('created_at', { ascending: false });
+    if (r.error) { $('#list').innerHTML = '<p class="err">' + esc(r.error.message) + '</p>'; return; }
+    state.rows = r.data || [];
+    renderRichieste(); refreshBadge();
+  }
+  function rqVisible() {
+    var q = state.rqSearch.toLowerCase();
+    return state.rows.filter(function (x) {
+      if (state.rqFilter && x.stato !== state.rqFilter) return false;
+      return !q || [x.nome, x.telefono, x.email, x.corso, x.pagina, x.oggetto, x.messaggio, x.note].join(' ').toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  function renderRichieste() {
+    $$('.chip-n').forEach(function (c) { var f = c.dataset.n; c.textContent = state.rows.filter(function (x) { return !f || x.stato === f; }).length; });
+    var rows = rqVisible();
+    if (!rows.length) { $('#list').innerHTML = '<p class="empty">' + (state.rows.length ? 'Nessuna richiesta con questi filtri.' : 'Ancora nessuna richiesta: qui compariranno i moduli compilati sul sito.') + '</p>'; return; }
+    $('#list').innerHTML = rows.map(function (x) {
+      var st = RQ[x.stato] || RQ.nuova;
+      var dove = [x.pagina, x.corso].filter(Boolean).map(esc).join(' · ');
+      return '<article class="rq ' + st.cls + '" data-id="' + x.id + '">' +
+        '<div class="rq-head"><div><strong class="rq-name">' + esc(x.nome) + '</strong><span class="rq-date">' + fmtDateTime(x.created_at) + '</span></div>' +
+        '<select class="rq-stato ' + st.cls + '" data-id="' + x.id + '" aria-label="Stato">' + RQ_STATI.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === x.stato ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select></div>' +
+        '<div class="rq-contacts"><a href="tel:' + esc(String(x.telefono).replace(/[^\d+]/g, '')) + '">' + esc(x.telefono) + '</a><a href="mailto:' + esc(x.email) + '">' + esc(x.email) + '</a></div>' +
+        (dove ? '<div class="rq-where">' + dove + '</div>' : '') +
+        (x.oggetto ? '<div class="rq-obj">' + esc(x.oggetto) + '</div>' : '') +
+        (x.messaggio ? '<p class="rq-msg">' + esc(x.messaggio) + '</p>' : '') +
+        '<div class="rq-foot"><input class="rq-note" data-id="' + x.id + '" maxlength="2000" placeholder="Note interne (es. richiamato il 23/09)" value="' + esc(x.note || '') + '" />' +
+        '<button type="button" class="btn btn-ghost btn-sm rq-del" data-id="' + x.id + '">Elimina</button></div></article>';
+    }).join('');
+  }
+  async function rqUpdate(id, patch, msg) {
+    var r = await sb.from('web_richieste').update(patch).eq('id', id);
+    if (r.error) { toast('Errore: ' + r.error.message, true); return false; }
+    Object.assign(state.rows.find(function (x) { return x.id === id; }) || {}, patch);
+    toast(msg); return true;
+  }
+  $('#legend').addEventListener('click', function (e) {
+    if (state.tab !== 'richieste') return;
+    var c = e.target.closest('.chip');
+    if (c) { state.rqFilter = c.dataset.f; $$('.rq-chips .chip').forEach(function (x) { x.classList.toggle('active', x === c); }); renderRichieste(); }
+    if (e.target.id === 'rq-refresh') loadRichieste();
+    if (e.target.id === 'rq-csv') {
+      var cols = [['created_at', 'Data'], ['nome', 'Nome e cognome'], ['telefono', 'Telefono'], ['email', 'Email'], ['pagina', 'Pagina'], ['corso', 'Corso'], ['oggetto', 'Oggetto'], ['messaggio', 'Messaggio'], ['stato', 'Stato'], ['note', 'Note']];
+      var q = function (v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; };
+      var csv = '\ufeff' + cols.map(function (c) { return q(c[1]); }).join(';') + '\r\n' + rqVisible().map(function (x) {
+        return cols.map(function (c) { return q(c[0] === 'created_at' ? fmtDateTime(x.created_at) : c[0] === 'stato' ? (RQ[x.stato] || {}).label : x[c[0]]); }).join(';');
+      }).join('\r\n');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = 'richieste-sito-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+  });
+  $('#legend').addEventListener('input', function (e) { if (e.target.classList.contains('rq-search')) { state.rqSearch = e.target.value; renderRichieste(); } });
+  $('#list').addEventListener('change', async function (e) {
+    if (state.tab !== 'richieste') return;
+    var id = e.target.dataset.id; if (!id) return;
+    if (e.target.classList.contains('rq-stato')) {
+      if (await rqUpdate(id, { stato: e.target.value }, 'Stato aggiornato')) { renderRichieste(); refreshBadge(); }
+    } else if (e.target.classList.contains('rq-note')) {
+      await rqUpdate(id, { note: e.target.value.trim() || null }, 'Nota salvata');
+    }
+  });
+  $('#list').addEventListener('click', async function (e) {
+    var b = e.target.closest('.rq-del'); if (!b || state.tab !== 'richieste') return;
+    var x = state.rows.find(function (r) { return r.id === b.dataset.id; });
+    if (!confirm('Eliminare definitivamente la richiesta di ' + (x ? x.nome : '') + '?')) return;
+    var r = await sb.from('web_richieste').delete().eq('id', b.dataset.id);
+    if (r.error) { toast('Errore: ' + r.error.message, true); return; }
+    state.rows = state.rows.filter(function (r2) { return r2.id !== b.dataset.id; });
+    renderRichieste(); refreshBadge(); toast('Richiesta eliminata');
+  });
+
   $('#list').addEventListener('click', function (e) { var b = e.target.closest('.btn-edit'); if (b) openEditor(state.rows.find(function (x) { return x.id === b.dataset.id; })); });
   $('#btn-new').addEventListener('click', function () { openEditor(null); });
 

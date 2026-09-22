@@ -849,3 +849,13 @@ main { overflow-x: clip; }
   .avviso-loghi img { height: 40px; }
   .avviso-hero.has-loghi { padding-bottom: 86px; }
 }
+
+/* ---------- Modulo: corso di interesse, trappola anti-bot, esito ---------- */
+.contact-form select.input { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center; }
+.contact-form select.input option { color: #333; }
+.contact-form .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.form-status.ok { background: rgba(255, 255, 255, .12); border-radius: 8px; padding: 12px 16px; }
+.form-status a { color: #fff; text-decoration: underline; }
+.btn-form[disabled] { opacity: .7; cursor: wait; }

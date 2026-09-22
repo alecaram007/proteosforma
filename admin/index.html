@@ -7,7 +7,7 @@
   <title>Dashboard - Proteos</title>
   <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png" />
   <link rel="stylesheet" href="/fonts/fonts.css" />
-  <link rel="stylesheet" href="/admin/admin.css?v=fb1d633c" />
+  <link rel="stylesheet" href="/admin/admin.css?v=634fde56" />
 </head>
 <body>
   <!-- LOGIN -->
@@ -15,7 +15,7 @@
     <form id="login-form" class="login-card" novalidate>
       <img src="/img/logo.png" alt="Proteos" width="1359" height="505" />
       <h1>Dashboard sito</h1>
-      <p class="muted">Accedi per pubblicare avvisi, corsi e bandi su proteosforma.it</p>
+      <p class="muted">Accedi per pubblicare avvisi, corsi e bandi su proteosformazione.it e gestire le richieste arrivate dal sito</p>
       <label>Email<input type="email" name="email" autocomplete="username" required /></label>
       <label>Password<input type="password" name="password" autocomplete="current-password" required /></label>
       <button class="btn btn-primary" type="submit">Accedi</button>
@@ -31,6 +31,7 @@
         <button class="tab active" data-tab="avvisi" role="tab">Avvisi</button>
         <button class="tab" data-tab="corsi" role="tab">Corsi</button>
         <button class="tab" data-tab="bandi" role="tab">Bandi</button>
+        <button class="tab" data-tab="richieste" role="tab">Richieste <span class="tab-badge" id="badge-richieste" hidden></span></button>
       </nav>
       <div class="user">
         <span id="user-email" class="muted"></span>
@@ -92,6 +93,6 @@
 
   <script src="/config.js?v=7388af4e"></script>
   <script src="/vendor/supabase/supabase.js"></script>
-  <script src="/admin/admin.js?v=bc1fa668"></script>
+  <script src="/admin/admin.js?v=21465a11"></script>
 </body>
 </html>

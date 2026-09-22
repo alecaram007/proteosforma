@@ -270,16 +270,17 @@ def contact_form(cta: str = "Invia messaggio", a: int = 14, b: int = 14) -> str:
         <form class="contact-form" novalidate data-a="{a}" data-b="{b}">
           <div class="form-row">
             <label class="sr-only" for="f-name">Nome e Cognome</label>
-            <input class="input" id="f-name" name="nome" type="text" placeholder="Nome e Cognome" required />
+            <input class="input" id="f-name" name="nome" type="text" placeholder="Nome e Cognome" maxlength="120" autocomplete="name" required />
             <label class="sr-only" for="f-tel">Numero di telefono</label>
-            <input class="input" id="f-tel" name="telefono" type="tel" placeholder="Numero di telefono" required />
+            <input class="input" id="f-tel" name="telefono" type="tel" placeholder="Numero di telefono" maxlength="40" autocomplete="tel" required />
           </div>
           <label class="sr-only" for="f-email">Indirizzo email</label>
-          <input class="input" id="f-email" name="email" type="email" placeholder="Indirizzo email" required />
+          <input class="input" id="f-email" name="email" type="email" placeholder="Indirizzo email" maxlength="200" autocomplete="email" required />
           <label class="sr-only" for="f-subject">Oggetto del messaggio</label>
-          <input class="input" id="f-subject" name="oggetto" type="text" placeholder="Oggetto del messaggio" />
+          <input class="input" id="f-subject" name="oggetto" type="text" placeholder="Oggetto del messaggio" maxlength="200" />
           <label class="sr-only" for="f-msg">Messaggio</label>
-          <textarea class="input" id="f-msg" name="messaggio" rows="6" placeholder="Messaggio" required></textarea>
+          <textarea class="input" id="f-msg" name="messaggio" rows="6" placeholder="Messaggio" maxlength="4000" required></textarea>
+          <div class="hp" aria-hidden="true"><label>Sito web <input name="sito" type="text" tabindex="-1" autocomplete="off" /></label></div>
           <p class="form-privacy"><label><input type="checkbox" name="privacy" required /> Ho letto l’<a href="{BASE}/privacy-policy/">informativa privacy</a> e acconsento al trattamento dei dati per essere ricontattato.</label></p>
           <div class="form-bottom">
             <label class="captcha"><span>{a} + {b} = </span><input class="input captcha-input" name="captcha" type="text" inputmode="numeric" size="2" required /></label>
@@ -612,7 +613,7 @@ def build_legal():
         {titolare}
         <h2>1. Tipologia di dati trattati</h2>
         <p><strong>Dati di navigazione.</strong> I sistemi informatici e le procedure software preposte al funzionamento di questo sito acquisiscono, nel corso del loro normale esercizio, alcuni dati la cui trasmissione è implicita nell’uso dei protocolli di comunicazione di Internet (indirizzi IP, orario della richiesta, URL richiesto, dimensione della risposta, browser e sistema operativo). Tali dati sono trattati dal fornitore di hosting esclusivamente per finalità tecniche e di sicurezza e vengono conservati per il tempo strettamente necessario.</p>
-        <p><strong>Dati forniti volontariamente.</strong> Compilando i moduli di contatto o di iscrizione presenti sul sito (nome e cognome, telefono, email, oggetto e messaggio) l’utente fornisce dati personali che vengono trasmessi al Titolare tramite il proprio client di posta elettronica. L’invio è facoltativo e comporta la successiva acquisizione dell’indirizzo del mittente e degli altri dati inseriti.</p>
+        <p><strong>Dati forniti volontariamente.</strong> Compilando i moduli di contatto o di iscrizione presenti sul sito (nome e cognome, telefono, email, oggetto e messaggio) l’utente fornisce dati personali (ed eventualmente il corso di interesse) che vengono registrati nell’area riservata del sito, consultabile solo dal personale autorizzato del Titolare. Per prevenire invii automatici e abusi viene conservata anche un’impronta cifrata (non reversibile) dell’indirizzo IP di provenienza. L’invio è facoltativo; senza i dati obbligatori non è possibile ricontattare l’utente.</p>
         <h2>2. Finalità e base giuridica</h2>
         <ul>
           <li>Riscontro alle richieste di informazioni e di iscrizione ai percorsi formativi (art. 6, par. 1, lett. b GDPR – misure precontrattuali su richiesta dell’interessato).</li>
@@ -620,9 +621,9 @@ def build_legal():
           <li>Sicurezza e corretto funzionamento del sito (art. 6, par. 1, lett. f GDPR – legittimo interesse).</li>
         </ul>
         <h2>3. Modalità di trattamento e conservazione</h2>
-        <p>I dati sono trattati con strumenti informatici e cartacei, con misure adeguate a garantirne sicurezza e riservatezza. I dati dei moduli di contatto sono conservati per il tempo necessario a riscontrare la richiesta e, in caso di iscrizione a un percorso formativo, per la durata prevista dalla normativa sui corsi finanziati e dagli obblighi fiscali e amministrativi.</p>
+        <p>I dati sono trattati con strumenti informatici e cartacei, con misure adeguate a garantirne sicurezza e riservatezza. I dati dei moduli di contatto sono conservati per il tempo necessario a riscontrare la richiesta e comunque non oltre 24 mesi dall’invio; in caso di iscrizione a un percorso formativo, per la durata prevista dalla normativa sui corsi finanziati e dagli obblighi fiscali e amministrativi.</p>
         <h2>4. Destinatari</h2>
-        <p>I dati possono essere trattati da personale autorizzato del Titolare, dal fornitore di hosting del sito e, per i corsi finanziati, comunicati alla Regione Siciliana e agli enti preposti nei limiti degli obblighi di legge. I dati non sono diffusi né trasferiti al di fuori dell’Unione Europea, salvo i servizi indicati nella Cookie Policy.</p>
+        <p>I dati possono essere trattati da personale autorizzato del Titolare, dal fornitore di hosting del sito e dal fornitore del database in cui sono registrate le richieste (Supabase, server in Francoforte, UE), che agiscono come responsabili del trattamento, e, per i corsi finanziati, comunicati alla Regione Siciliana e agli enti preposti nei limiti degli obblighi di legge. I dati non sono diffusi né trasferiti al di fuori dell’Unione Europea, salvo i servizi indicati nella Cookie Policy.</p>
         <h2>5. Diritti dell’interessato</h2>
         <p>L’interessato può esercitare in qualsiasi momento i diritti previsti dagli artt. 15-22 GDPR (accesso, rettifica, cancellazione, limitazione, portabilità, opposizione) scrivendo a <a href="mailto:{PEC}">{PEC}</a>. Ha inoltre il diritto di proporre reclamo al Garante per la protezione dei dati personali (<a href="https://www.garanteprivacy.it" rel="noopener" target="_blank">www.garanteprivacy.it</a>).</p>
         <h2>6. Cookie</h2>
@@ -637,7 +638,7 @@ def build_legal():
           <thead><tr><th>Nome</th><th>Tipo</th><th>Finalità</th><th>Durata</th></tr></thead>
           <tbody>
             <tr><td>proteos-consent</td><td>Tecnico (localStorage)</td><td>Memorizza la scelta espressa nel banner dei cookie.</td><td>Fino a cancellazione da parte dell’utente</td></tr>
-            <tr><td>Supabase (contenuti)</td><td>Terze parti</td><td>Avvisi, corsi e bandi sono caricati dal servizio Supabase (server in Francoforte, UE), che riceve l’indirizzo IP dell’utente per servire la richiesta. Non vengono impostati cookie.</td><td>Sessione</td></tr>
+            <tr><td>Supabase (contenuti)</td><td>Terze parti</td><td>Avvisi, corsi e bandi sono caricati dal servizio Supabase (server in Francoforte, UE), che riceve l’indirizzo IP dell’utente per servire la richiesta e registra i moduli di contatto inviati. Non vengono impostati cookie.</td><td>Sessione</td></tr>
             <tr><td>OpenStreetMap (mappa)</td><td>Terze parti</td><td>Nella pagina Contatti le immagini della mappa sono scaricate dai server di OpenStreetMap Foundation, che riceve l’indirizzo IP dell’utente. Non vengono impostati cookie.</td><td>Sessione</td></tr>
           </tbody>
         </table>

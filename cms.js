@@ -188,6 +188,9 @@
         '<h2 class="h-red">Per iscriverti al modulo compila il form sottostante</h2><p class="center">Verrai ricontattato dalla nostra segreteria</p>' +
         '<div class="form-box">' + document.getElementById('cms-form-template').innerHTML + '</div></div></section>';
       el.innerHTML = html;
+      var subj = corsi.length && el.querySelector('.avviso-end .contact-form [name="oggetto"]');
+      if (subj) subj.insertAdjacentHTML('beforebegin', '<label class="sr-only" for="f-corso">Corso di interesse</label><select class="input" id="f-corso" name="corso">' +
+        '<option value="">Corso di interesse</option>' + corsi.map(function (c) { return '<option>' + esc(c.titolo) + '</option>'; }).join('') + '</select>');
       if (window.ProteosForms) window.ProteosForms.init(el);
       fx(el);
       if (location.hash) { var t = document.querySelector(location.hash); if (t) setTimeout(function () { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150); }
