@@ -39,7 +39,17 @@ function head(html, o) {
     .replace(/(<link rel="canonical" href=")[^"]*(")/, `$1${url}$2`)
     .replace(/\s*<meta name="robots" content="[^"]*" \/>/, '');
   if (o.noindex) html = html.replace('</head>', '  <meta name="robots" content="noindex" />\n</head>');
-  if (o.jsonld) html = html.replace('</head>', `  ${o.jsonld}\n</head>`);
+  if (o.jsonld) {
+    // il percorso di navigazione del modello (es. Home › Avviso) lascia il posto a quello della pagina
+    html = html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (m, j) => {
+      try {
+        const d = JSON.parse(j);
+        d['@graph'] = (d['@graph'] || []).filter((x) => x['@type'] !== 'BreadcrumbList');
+        return `<script type="application/ld+json">${JSON.stringify(d).replace(/</g, '\\u003c')}</script>`;
+      } catch (e) { return m; }
+    });
+    html = html.replace('</head>', `  ${o.jsonld}\n</head>`);
+  }
   return html;
 }
 
