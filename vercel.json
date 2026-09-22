@@ -2,7 +2,9 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "rewrites": [
+    { "source": "/avviso/:slug/", "destination": "/avviso/index.html" },
     { "source": "/avviso/:slug", "destination": "/avviso/index.html" },
+    { "source": "/bandi-e-avvisi/:id/", "destination": "/bandi-e-avvisi/index.html" },
     { "source": "/bandi-e-avvisi/:id", "destination": "/bandi-e-avvisi/index.html" }
   ],
   "redirects": [

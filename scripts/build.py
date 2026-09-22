@@ -36,6 +36,7 @@ NAV = [
     ("Corsi", "/corsi/"),
     ("Corsi finanziati", "#", [
         ("Avviso POC n. 1/2026", "/avviso/avviso-1-2026-poc/"),
+        ("Avviso 23/2024", "/avviso/avviso-23-2024/"),
         ("Avviso 6/2025", "/avviso/avviso-6-2025/"),
         ("Avviso 7/2023", "/avviso/avviso-7-2023/"),
         ("Avviso 20/2024", "/avviso/avviso-20-2024/"),
@@ -164,6 +165,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
         <h4>Corsi finanziati</h4>
         <ul data-cms="nav-avvisi">
           <li><a href="{BASE}/avviso/avviso-1-2026-poc/">Avviso POC n. 1/2026</a></li>
+          <li><a href="{BASE}/avviso/avviso-23-2024/">Avviso 23/2024</a></li>
           <li><a href="{BASE}/avviso/avviso-6-2025/">Avviso 6/2025</a></li>
           <li><a href="{BASE}/avviso/avviso-7-2023/">Avviso 7/2023</a></li>
           <li><a href="{BASE}/avviso/avviso-20-2024/">Avviso 20/2024</a></li>
@@ -657,7 +659,7 @@ def main():
     write("avviso/index.html", build_avviso_template())
     for slug, content in build_legal().items():
         write(f"{slug}/index.html", content)
-    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso/avviso-1-2026-poc/", "/avviso/avviso-6-2025/", "/avviso/avviso-7-2023/", "/avviso/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
+    pages = ["/", "/chi-siamo/", "/corsi/", "/avviso/avviso-1-2026-poc/", "/avviso/avviso-23-2024/", "/avviso/avviso-6-2025/", "/avviso/avviso-7-2023/", "/avviso/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)
