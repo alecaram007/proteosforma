@@ -8,6 +8,7 @@ import re
 ROOT = Path(__file__).resolve().parent.parent
 BASE = ""
 SITE = "https://proteosforma.it"
+SUPABASE_URL = "https://jqlzuovigrxcbmazyysg.supabase.co"
 
 
 def ver(rel: str) -> str:
@@ -38,8 +39,46 @@ SEDI_OCCASIONALI = [
     "Via Padre Pino Puglisi, 19 – Alcamo (TP)",
 ]
 
-IMG = {k: f"{BASE}/img/photos/{k}.jpg" for k in [
-    "hero_home", "card1", "card2", "card3", "hero_chi", "chi1", "chi2", "chi3", "hero_contatti"]}
+try:
+    from PIL import Image  # opzionale: serve solo a rigenerare le versioni WebP
+except ImportError:
+    Image = None
+
+
+def webp(src: str, dst: str, width: int, quality: int = 78) -> str:
+    """Versione WebP ridimensionata di un'immagine (rigenerata se l'originale è più recente).
+    Senza Pillow, o se la conversione non è possibile, restituisce l'originale."""
+    s, d = ROOT / src, ROOT / dst
+    if Image is not None and (not d.exists() or d.stat().st_mtime < s.stat().st_mtime):
+        im = Image.open(s)
+        if im.width > width:
+            im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
+        im.save(d, "WEBP", quality=quality, method=6)
+        print("webp", dst)
+    return f"{BASE}/{dst}" if d.exists() else f"{BASE}/{src}"
+
+
+PHOTOS = ["hero_home", "card1", "card2", "card3", "hero_chi", "chi1", "chi2", "chi3", "hero_contatti"]
+IMG = {k: webp(f"img/photos/{k}.jpg", f"img/photos/{k}.webp", 1800) for k in PHOTOS}
+IMG_SM = {k: webp(f"img/photos/{k}.jpg", f"img/photos/{k}-900.webp", 900) for k in ("hero_home", "hero_chi", "hero_contatti")}
+LOGO = webp("img/logo.png", "img/logo-header.webp", 360, 90)
+LOGO_WHITE = webp("img/logo-white.png", "img/logo-white.webp", 900, 90)
+LOGO_WHITE_SM = webp("img/logo-white.png", "img/logo-white-sm.webp", 400, 90)
+
+
+def hero_media(key: str, eager: bool = False) -> str:
+    """Foto di sfondo dell'hero come <img> responsive (LCP), con zoom lento e parallax."""
+    load = 'fetchpriority="high"' if eager else 'loading="lazy"'
+    return (f'<div class="hero-media" data-parallax="0.18" aria-hidden="true">'
+            f'<img src="{IMG[key]}" srcset="{IMG_SM[key]} 900w, {IMG[key]} 1800w" sizes="100vw" alt="" width="1800" height="1200" {load} decoding="async" /></div>')
+
+
+WAVE = """<div class="hero-wave" aria-hidden="true">
+        <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path d="M0 60C360 100 1080 20 1440 60S2520 20 2880 60V100H0Z"/></svg>
+        <svg viewBox="0 0 2880 100" preserveAspectRatio="none"><path d="M0 60C360 100 1080 20 1440 60S2520 20 2880 60V100H0Z"/></svg>
+      </div>"""
+
+
 
 NAV = [
     ("Home", "/"),
@@ -119,16 +158,18 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <link rel="apple-touch-icon" href="{BASE}/img/apple-touch-icon.png" />
   <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/open-sans-400-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="{BASE}/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="preconnect" href="{SUPABASE_URL}" crossorigin />
   <link rel="stylesheet" href="{BASE}/fonts/fonts.css" />
   <link rel="stylesheet" href="{asset('style.css')}" />
   {extra_head}
+  <script>document.documentElement.classList.add('fx');setTimeout(function(){{if(!window.ProteosFX)document.documentElement.classList.remove('fx')}},2500)</script>
   <script type="application/ld+json">{{"@context":"https://schema.org","@type":"EducationalOrganization","name":"{RAGIONE_SOCIALE}","alternateName":"{BRAND}","url":"{SITE}/","logo":"{SITE}/img/logo.png","email":"{PEC}","vatID":"IT{PIVA}","taxID":"{PIVA}","address":{{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"}},"areaServed":"Sicilia"}}</script>
 </head>
 <body>
   <header class="site-header" id="top">
     <div class="container header-inner">
       <a class="logo" href="{BASE}/" aria-label="{BRAND} – Home">
-        <img src="{BASE}/img/logo.png" alt="{BRAND} – {TAGLINE}" width="1359" height="505" />
+        <img src="{LOGO}" alt="{BRAND} – {TAGLINE}" width="360" height="134" />
       </a>
       <nav class="main-nav" aria-label="Menu principale">
         <ul id="primary-menu">
@@ -157,7 +198,7 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-about">
-        <img class="footer-logo" src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" loading="lazy" />
+        <img class="footer-logo" src="{LOGO_WHITE_SM}" alt="{BRAND}" width="400" height="148" loading="lazy" />
         <p>Ente di formazione professionale accreditato dalla Regione Siciliana. Corsi, certificazioni e percorsi finanziati a Favara, Ragusa e Alcamo.</p>
         <p class="footer-accr">Accreditamento CIR AD5015 · D.D.G. n. 699 del 29/05/2025<br>Orientamento e Formazione professionale (B, D)</p>
       </div>
@@ -214,8 +255,8 @@ def page(*, path: str, title: str, description: str, body: str, extra_head: str 
   </button>
 
   <script src="{asset('site.js')}" defer></script>
+  <script src="{asset('fx.js')}" defer></script>
   <script src="{asset('config.js')}" defer></script>
-  <script src="{BASE}/vendor/supabase/supabase.js" defer></script>
   <script src="{asset('cms.js')}" defer></script>
 </body>
 </html>
@@ -328,50 +369,87 @@ def build_home():
     ]
     cards_html = "".join(
         f"""
-          <article class="card">
-            <img src="{img}" alt="" width="800" height="541" loading="lazy" />
+          <article class="card" data-tilt>
+            <div class="card-media"><img src="{img}" alt="" width="800" height="541" loading="lazy" decoding="async" /></div>
             <div class="card-body">
+              <span class="card-num" aria-hidden="true">0{i}</span>
               <h4>{t}</h4>
               <p>{txt}</p>
             </div>
             <a class="btn btn-square" href="{BASE}{href}">Scopri di più</a>
           </article>"""
-        for t, img, txt, href in cards
+        for i, (t, img, txt, href) in enumerate(cards, 1)
     )
+    ribbon = "".join(f"<span>{w}</span>" for w in [
+        "Corsi gratuiti", "Qualifiche professionali", "Tirocini in azienda", "Certificazioni",
+        "Indennità di frequenza", "Favara · Ragusa · Alcamo", "Ente accreditato Regione Siciliana"])
     body = f"""
-    <section class="hero hero-home" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,#0a7dbe 99%),url('{IMG["hero_home"]}')">
+    <section class="hero hero-home">
+      {hero_media("hero_home", eager=True)}
+      <div class="hero-shade"></div>
       <div class="hero-logo">
-        <img src="{BASE}/img/logo-white.png" alt="{BRAND} – {TAGLINE}" width="1359" height="505" fetchpriority="high" />
+        <img class="hero-logo-img" src="{LOGO_WHITE}" alt="{BRAND} – {TAGLINE}" width="900" height="334" fetchpriority="high" />
         <span class="hero-tagline">{TAGLINE}</span>
+        <div class="hero-cta">
+          <a class="btn btn-glow" href="{BASE}/corsi/" data-magnetic>Scopri i corsi <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="{BASE}/contatti/" data-magnetic>Contattaci</a>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#intro" aria-label="Scorri verso il basso"><span></span></a>
+      {WAVE}
+    </section>
+
+    <section class="section section-navy intro" id="intro">
+      <div class="container">
+        <h2 data-split>Formazione Professionale</h2>
+        <p>{BRAND} è il tuo punto di riferimento per una formazione di alta qualità in Sicilia. Offriamo corsi innovativi e pratici che preparano gli studenti per il mondo del lavoro. La nostra missione è fornire un’educazione che non solo informi, ma ispiri. Unisciti a noi per scoprire opportunità uniche che ti aiuteranno a realizzare i tuoi sogni professionali. Con un team di esperti e un ambiente stimolante, siamo qui per supportarti in ogni passo del tuo percorso formativo.</p>
+        <div class="stats" data-stagger>
+          <div class="stat"><b class="stat-num" data-cms-stat="avvisi">–</b><span>Avvisi regionali</span></div>
+          <div class="stat"><b class="stat-num" data-cms-stat="corsi">–</b><span>Percorsi formativi</span></div>
+          <div class="stat"><b class="stat-num" data-count="3">3</b><span>Città: Favara, Ragusa, Alcamo</span></div>
+          <div class="stat"><b class="stat-num" data-count="100" data-suffix="%">100%</b><span>Gratuiti i corsi finanziati</span></div>
+        </div>
       </div>
     </section>
 
-    <section class="section section-navy intro">
-      <div class="container">
-        <h2>Formazione Professionale</h2>
-        <p>{BRAND} è il tuo punto di riferimento per una formazione di alta qualità in Sicilia. Offriamo corsi innovativi e pratici che preparano gli studenti per il mondo del lavoro. La nostra missione è fornire un’educazione che non solo informi, ma ispiri. Unisciti a noi per scoprire opportunità uniche che ti aiuteranno a realizzare i tuoi sogni professionali. Con un team di esperti e un ambiente stimolante, siamo qui per supportarti in ogni passo del tuo percorso formativo.</p>
-      </div>
-    </section>
+    <div class="ribbon" aria-hidden="true"><div class="ribbon-track">{ribbon}{ribbon}</div></div>
 
     <section class="section section-light offerta">
       <div class="container">
         <h2 class="sr-only">Offerta Formativa</h2>
-        <div class="cards">{cards_html}
+        <div class="cards" data-stagger>{cards_html}
         </div>
       </div>
     </section>
+
+    <section class="section section-white home-corsi">
+      <div class="container section-head">
+        <div>
+          <span class="eyebrow">Offerta formativa</span>
+          <h2 class="section-title" data-split>Corsi in evidenza</h2>
+        </div>
+        <div class="rail-nav">
+          <button type="button" class="rail-btn" data-rail="-1" aria-label="Corsi precedenti">←</button>
+          <button type="button" class="rail-btn" data-rail="1" aria-label="Corsi successivi">→</button>
+        </div>
+      </div>
+      <div class="rail" data-cms="home-corsi" data-drag tabindex="0" aria-label="Corsi in evidenza"><p class="cms-loading">Caricamento corsi…</p></div>
+      <div class="container center home-corsi-more"><a class="btn btn-square" href="{BASE}/corsi/">Tutti i corsi</a></div>
+    </section>
 """
-    return page(path="/", title="Home", extra_head=f'<link rel="preload" as="image" href="{IMG["hero_home"]}" fetchpriority="high" />',
+    return page(path="/", title="Home", extra_head=f'<link rel="preload" as="image" href="{IMG_SM["hero_home"]}" imagesrcset="{IMG_SM["hero_home"]} 900w, {IMG["hero_home"]} 1800w" imagesizes="100vw" fetchpriority="high" />',
                 description=f"{BRAND} è il tuo punto di riferimento per una formazione di alta qualità in Sicilia: corsi, certificazioni e corsi finanziati dalla Regione Siciliana.",
                 body=body)
 
 
 def build_chi_siamo():
     body = f"""
-    <section class="hero hero-page hero-chi" style="background-image:linear-gradient(180deg,rgba(0,0,0,.3) 0%,rgba(10,125,190,.85) 99%),url('{IMG["hero_chi"]}')">
+    <section class="hero hero-page hero-chi">
+      {hero_media("hero_chi", eager=True)}
+      <div class="hero-shade"></div>
       <div class="container hero-split">
-        <div class="hero-title"><h1>Chi siamo</h1></div>
-        <div class="hero-side"><img src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" /></div>
+        <div class="hero-title"><h1 data-split>Chi siamo</h1></div>
+        <div class="hero-side"><img src="{LOGO_WHITE_SM}" alt="{BRAND}" width="400" height="148" /></div>
       </div>
       <div class="container">
         <div class="hero-card">
@@ -383,7 +461,7 @@ def build_chi_siamo():
 
     <section class="section section-white split">
       <div class="container split-inner">
-        <div class="split-media"><img src="{IMG["chi1"]}" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="{IMG["chi1"]}" alt="" width="1200" height="800" decoding="async" data-parallax="0.07" /></div>
         <div class="split-text">
           <h2>Giovane e Dinamica</h2>
           <p>In {BRAND}, ci impegniamo a creare un ambiente di apprendimento stimolante e inclusivo. I nostri corsi sono progettati per essere accessibili a tutti, indipendentemente dal livello di esperienza. Crediamo fermamente che ogni persona abbia il diritto di formarsi e di accedere a opportunità di crescita. Con il nostro approccio pratico e interattivo, i partecipanti possono acquisire competenze reali che possono applicare immediatamente nel mondo del lavoro. Siamo qui per accompagnarti in ogni fase del tuo percorso formativo, offrendo supporto e consulenza personalizzata. Scopri il tuo potenziale con noi e inizia a costruire il tuo futuro oggi stesso.</p>
@@ -397,13 +475,13 @@ def build_chi_siamo():
           <h2>La nostra visione</h2>
           <p>In {BRAND}, siamo appassionati di trasformare le aspirazioni in realtà. Ogni corso che offriamo è un viaggio verso l’eccellenza, progettato per ispirare e motivare. La nostra squadra di esperti è dedicata a fornire un’istruzione di alta qualità, arricchita da esperienze pratiche e casi studio reali. Siamo convinti che la formazione non sia solo un’opportunità, ma un diritto fondamentale per ogni individuo. Con una varietà di corsi che spaziano dalle competenze tecniche alle soft skills, abbiamo qualcosa per tutti. Unisciti a noi e inizia a scrivere la tua storia di successo con {BRAND}.</p>
         </div>
-        <div class="split-media"><img src="{IMG["chi2"]}" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="{IMG["chi2"]}" alt="" width="1200" height="800" decoding="async" data-parallax="0.07" /></div>
       </div>
     </section>
 
     <section class="section section-white split">
       <div class="container split-inner">
-        <div class="split-media"><img src="{IMG["chi3"]}" alt="" width="1200" height="800" loading="lazy" /></div>
+        <div class="split-media"><img src="{IMG["chi3"]}" alt="" width="1200" height="800" decoding="async" data-parallax="0.07" /></div>
         <div class="split-text">
           <h2>Mission</h2>
           <p>In {BRAND}, crediamo che ogni giorno sia un’opportunità per imparare e crescere. I nostri corsi non sono solo un modo per acquisire competenze, ma un’esperienza trasformativa che ti prepara ad affrontare le sfide del mondo moderno. Siamo qui per supportarti nel tuo viaggio, offrendoti non solo conoscenze, ma anche la fiducia necessaria per affrontare il futuro. Con una rete di professionisti e formatori esperti, ogni lezione è un passo verso il tuo successo. Non aspettare oltre, il tuo futuro inizia con noi.</p>
@@ -467,11 +545,12 @@ def build_bandi():
 
 def build_contatti():
     body = f"""
-    <section class="hero hero-page hero-contatti" style="background-image:url('{IMG["hero_contatti"]}')">
+    <section class="hero hero-page hero-contatti">
+      {hero_media("hero_contatti", eager=True)}
       <div class="container hero-split">
         <div class="hero-title">
-          <h1>Contatti</h1>
-          <img class="hero-logo-small" src="{BASE}/img/logo-white.png" alt="{BRAND}" width="1359" height="505" />
+          <h1 data-split>Contatti</h1>
+          <img class="hero-logo-small" src="{LOGO_WHITE_SM}" alt="{BRAND}" width="400" height="148" />
         </div>
         <div class="hero-side">
           <div class="map-box" id="map-box" data-sedi='[{{"lat":37.3191283,"lon":13.6662229,"title":"Sede direzionale e di erogazione","addr":"Via Cesare Sessa, 58 – 92026 Favara (AG)"}},{{"lat":37.3172090,"lon":13.6588283,"title":"Sede legale","addr":"Cortile Dulcetta, 39 – 92026 Favara (AG)"}}]'></div>
@@ -669,6 +748,22 @@ def stamp_assets(rel: str):
     print("stamped", rel)
 
 
+def build_404():
+    body = f"""
+    <section class="section section-white blog-page">
+      <div class="container">
+        <h1 class="blog-title">Pagina non trovata</h1>
+        <div class="blog-sheet">
+          <h2 class="no-results">Pagina non trovata</h2>
+          <p>La pagina richiesta non esiste o è stata spostata. Torna alla <a href="{BASE}/">home</a>, guarda i <a href="{BASE}/corsi/">corsi attivi</a> o <a href="{BASE}/contatti/">contattaci</a>.</p>
+        </div>
+      </div>
+    </section>
+"""
+    return page(path="/404.html", title="Pagina non trovata", description=f"Pagina non trovata – {BRAND}.", body=body,
+                extra_head='<meta name="robots" content="noindex" />')
+
+
 def main():
     write("index.html", build_home())
     write("chi-siamo/index.html", build_chi_siamo())
@@ -677,13 +772,13 @@ def main():
     write("bandi-e-avvisi/index.html", build_bandi())
     write("contatti/index.html", build_contatti())
     write("avviso/index.html", build_avviso_template())
+    write("404.html", build_404())
     for slug, content in build_legal().items():
         write(f"{slug}/index.html", content)
     pages = ["/", "/chi-siamo/", "/corsi/", "/avviso/avviso-1-2026-poc/", "/avviso/avviso-23-2024/", "/avviso/avviso-6-2025/", "/avviso/avviso-7-2023/", "/avviso/avviso-20-2024/", "/bandi-e-avvisi/", "/news/", "/contatti/", "/privacy-policy/", "/cookie-policy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(
         f"  <url><loc>{SITE}{p}</loc></url>\n" for p in pages) + "</urlset>\n"
     write("sitemap.xml", sm)
-    stamp_assets("404.html")
     stamp_assets("admin/index.html")
 
 

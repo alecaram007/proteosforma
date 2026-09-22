@@ -9,7 +9,8 @@ Nessun build step: le pagine HTML sono già nella radice del repo e si possono h
 index.html               Home
 admin/                   Dashboard di pubblicazione (login)
 avviso/                  Pagina avviso dinamica (/avviso/<slug>/)
-config.js  cms.js        Configurazione Supabase e rendering dei contenuti dinamici
+config.js  cms.js        Configurazione Supabase e rendering dei contenuti dinamici (API REST con fetch, senza supabase-js)
+fx.js                    Animazioni: comparsa allo scroll, titoli a parole, contatori, tilt, parallax, carosello
 privacy-policy/          Privacy Policy
 cookie-policy/           Cookie Policy
 chi-siamo/               Chi siamo
@@ -19,9 +20,9 @@ news/                    News
 contatti/                Contatti
 404.html                 Pagina non trovata
 style.css  site.js       Stile e comportamenti (menu, form, cookie banner, mappa)
-img/                     Logo (colore e bianco), favicon, icone; img/photos/ le foto (Unsplash, licenza libera)
+img/                     Logo (colore e bianco), favicon, icone; img/photos/ le foto (Unsplash, licenza libera) con le versioni .webp
 fonts/                   Font self-hosted (Open Sans, Roboto, Playfair Display, Lato)
-vendor/                  Leaflet (mappa) e supabase-js, self-hosted
+vendor/                  Leaflet (mappa) e supabase-js (solo per la dashboard), self-hosted
 vercel.json              Rewrite per le pagine dinamiche, redirect dai vecchi URL, header
 scripts/build.py         Generatore delle pagine (vedi sotto)
 CNAME  robots.txt  sitemap.xml
@@ -52,7 +53,7 @@ python3 scripts/build.py
 Va rilanciato anche dopo ogni modifica a `style.css`, `site.js`, `cms.js`, `config.js` o ai file di `admin/`: aggiorna il parametro `?v=` nei link, così i browser non usano la versione vecchia in cache.
 
 I dati da personalizzare sono le costanti in cima al file: `PIVA`, `SEDE_LEGALE`, `SEDE_OPERATIVA`, `TEL`, `EMAIL`, `INDIRIZZO` (e `EMAIL` in `site.js` per il form).
-Le foto sono in `img/photos/` (nomi in `IMG` dentro `build.py`): per usare foto proprie basta sostituire i file mantenendo lo stesso nome.
+Le foto sono in `img/photos/` (nomi in `PHOTOS` dentro `build.py`): per usare foto proprie basta sostituire i file `.jpg` mantenendo lo stesso nome e rilanciare `build.py`, che rigenera le versioni `.webp` usate dal sito (serve Pillow: `pip install pillow`; senza, il sito usa le `.jpg`).
 
 ## Hosting (GitHub Pages, già attivo)
 

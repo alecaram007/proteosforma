@@ -18,16 +18,18 @@
   <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/open-sans-400-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/roboto-500-latin.woff2" crossorigin />
+  <link rel="preconnect" href="https://jqlzuovigrxcbmazyysg.supabase.co" crossorigin />
   <link rel="stylesheet" href="/fonts/fonts.css" />
-  <link rel="stylesheet" href="/style.css?v=5f8dfea9" />
+  <link rel="stylesheet" href="/style.css?v=10289227" />
   
+  <script>document.documentElement.classList.add('fx');setTimeout(function(){if(!window.ProteosFX)document.documentElement.classList.remove('fx')},2500)</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"EducationalOrganization","name":"Proteos S.r.l. Impresa Sociale","alternateName":"Proteos","url":"https://proteosforma.it/","logo":"https://proteosforma.it/img/logo.png","email":"proteos@arubapec.it","vatID":"IT03838230823","taxID":"03838230823","address":{"@type":"PostalAddress","streetAddress":"Via Cesare Sessa, 58","postalCode":"92026","addressLocality":"Favara","addressRegion":"AG","addressCountry":"IT"},"areaServed":"Sicilia"}</script>
 </head>
 <body>
   <header class="site-header" id="top">
     <div class="container header-inner">
       <a class="logo" href="/" aria-label="Proteos – Home">
-        <img src="/img/logo.png" alt="Proteos – Ente di Formazione Professionale" width="1359" height="505" />
+        <img src="/img/logo-header.webp" alt="Proteos – Ente di Formazione Professionale" width="360" height="134" />
       </a>
       <nav class="main-nav" aria-label="Menu principale">
         <ul id="primary-menu">
@@ -57,11 +59,12 @@
 
   <main id="main">
 
-    <section class="hero hero-page hero-contatti" style="background-image:url('/img/photos/hero_contatti.jpg')">
+    <section class="hero hero-page hero-contatti">
+      <div class="hero-media" data-parallax="0.18" aria-hidden="true"><img src="/img/photos/hero_contatti.webp" srcset="/img/photos/hero_contatti-900.webp 900w, /img/photos/hero_contatti.webp 1800w" sizes="100vw" alt="" width="1800" height="1200" fetchpriority="high" decoding="async" /></div>
       <div class="container hero-split">
         <div class="hero-title">
-          <h1>Contatti</h1>
-          <img class="hero-logo-small" src="/img/logo-white.png" alt="Proteos" width="1359" height="505" />
+          <h1 data-split>Contatti</h1>
+          <img class="hero-logo-small" src="/img/logo-white-sm.webp" alt="Proteos" width="400" height="148" />
         </div>
         <div class="hero-side">
           <div class="map-box" id="map-box" data-sedi='[{"lat":37.3191283,"lon":13.6662229,"title":"Sede direzionale e di erogazione","addr":"Via Cesare Sessa, 58 – 92026 Favara (AG)"},{"lat":37.3172090,"lon":13.6588283,"title":"Sede legale","addr":"Cortile Dulcetta, 39 – 92026 Favara (AG)"}]'></div>
@@ -125,7 +128,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-about">
-        <img class="footer-logo" src="/img/logo-white.png" alt="Proteos" width="1359" height="505" loading="lazy" />
+        <img class="footer-logo" src="/img/logo-white-sm.webp" alt="Proteos" width="400" height="148" loading="lazy" />
         <p>Ente di formazione professionale accreditato dalla Regione Siciliana. Corsi, certificazioni e percorsi finanziati a Favara, Ragusa e Alcamo.</p>
         <p class="footer-accr">Accreditamento CIR AD5015 · D.D.G. n. 699 del 29/05/2025<br>Orientamento e Formazione professionale (B, D)</p>
       </div>
@@ -182,8 +185,8 @@
   </button>
 
   <script src="/site.js?v=8901a303" defer></script>
+  <script src="/fx.js?v=ab6ab031" defer></script>
   <script src="/config.js?v=7388af4e" defer></script>
-  <script src="/vendor/supabase/supabase.js" defer></script>
-  <script src="/cms.js?v=a957e299" defer></script>
+  <script src="/cms.js?v=45c42643" defer></script>
 </body>
 </html>
